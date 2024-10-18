@@ -5,6 +5,7 @@ import PetCard from "../components/PetCard";
 import Banner from "../components/Banner";
 import ShelterCard from "../components/ShelterCard";
 import Banner2 from "../components/Banner2";
+import Footer from "../components/Footer";
 
 const petInfo = [
   {
@@ -130,7 +131,7 @@ const shelterInfo = [
 
 const Home = () => {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <div className="hero-section">
         <Header />
         <div
@@ -324,6 +325,7 @@ const Home = () => {
         </div>
       </div>
       <Banner2 />
+      <Footer mt={"100px"} />
     </div>
   );
 };
