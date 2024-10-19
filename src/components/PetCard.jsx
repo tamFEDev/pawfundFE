@@ -1,7 +1,9 @@
 import { Button, Card, CardMedia, Typography } from "@mui/material";
 import { fontFamily } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 const PetCard = ({ name, gender, type, location, image, key }) => {
+  const navigate = useNavigate();
   return (
     <Card key={key} sx={{ p: "15px", width: "300px", borderRadius: "20px" }}>
       <CardMedia component={"img"} src={image} sx={{ width: "300px" }} />
@@ -104,6 +106,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
           marginTop: "24px",
           fontFamily: fontFamily.msr,
         }}
+        onClick={() => navigate("/adoption/id")}
       >
         More about me!
       </Button>

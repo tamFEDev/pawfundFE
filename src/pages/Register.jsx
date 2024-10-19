@@ -229,6 +229,7 @@ const Register = () => {
                   py: "10px",
                   textTransform: "none",
                   fontSize: "16px",
+                  fontFamily: fontFamily.msr,
                 }}
                 onClick={() => navigate("/login")}
               >

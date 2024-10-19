@@ -60,7 +60,7 @@ const petInfo = [
   },
 ];
 
-const PetList = ({ mb }) => {
+const PetList = ({ mb, amount }) => {
   return (
     <div
       className="pet-list"
@@ -73,7 +73,7 @@ const PetList = ({ mb }) => {
         marginBottom: mb,
       }}
     >
-      {petInfo.map((pet, index) => (
+      {petInfo.slice(0, amount).map((pet, index) => (
         <PetCard
           key={index}
           image={pet.image}
