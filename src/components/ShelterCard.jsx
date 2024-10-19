@@ -2,6 +2,7 @@ import { Button, Card, CardMedia, Typography } from "@mui/material";
 import React from "react";
 import { fontFamily } from "../constants";
 import CustomChip from "./CustomChip";
+import { useLocation } from "react-router-dom";
 
 const ShelterCard = ({
   name,
@@ -13,6 +14,8 @@ const ShelterCard = ({
   dog,
   img,
 }) => {
+  const loc = useLocation();
+  const currentPath = loc.pathname;
   return (
     <Card sx={{ p: "15px", width: "425px", borderRadius: "20px" }}>
       <CardMedia
@@ -187,7 +190,7 @@ const ShelterCard = ({
           fontFamily: fontFamily.msr,
         }}
       >
-        Take a visit
+        {currentPath === "/shelters" ? "Take a visit" : "Donate us!"}
       </Button>
     </Card>
   );

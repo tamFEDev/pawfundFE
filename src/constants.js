@@ -9,6 +9,7 @@ import fb from "./assets/fb.png";
 import ins from "./assets/ins.png";
 import ytb from "./assets/ytb.png";
 import x from "./assets/x.png";
+import shiba from "./assets/shiba.jpg";
 
 export const imgURL = {
   logo,
@@ -22,6 +23,7 @@ export const imgURL = {
   ins,
   ytb,
   x,
+  shiba,
 };
 
 export const fontFamily = {

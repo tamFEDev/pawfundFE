@@ -1,20 +1,20 @@
 import { Button, CardMedia, Typography } from "@mui/material";
 import { fontFamily, imgURL } from "../constants";
 
-const Banner2 = () => {
+const AdoptionBanner = ({ mt }) => {
   return (
     <div
       className="banner-section1"
-      style={{ padding: "0 60px", position: "relative" }}
+      style={{ padding: "0 60px", position: "relative", marginTop: mt }}
     >
       <CardMedia
         component={"img"}
-        src={imgURL.Banner2}
+        src={imgURL.banner}
         sx={{ width: "1400px" }}
       />
       <div
         className="banner1-content"
-        style={{ position: "absolute", top: 64, left: 845 }}
+        style={{ position: "absolute", top: 64, left: 185 }}
       >
         <div
           className=""
@@ -22,53 +22,56 @@ const Banner2 = () => {
         >
           <Typography
             variant="body1"
-            color="white"
+            color="#003459"
             fontSize={52}
             fontWeight={700}
-            textAlign={"right"}
             fontFamily={fontFamily.msr}
           >
-            Give Hope
+            Adoption
           </Typography>
+          <CardMedia
+            component={"img"}
+            src={imgURL.pawLogo}
+            sx={{ width: "42px" }}
+          />
         </div>
         <Typography
           variant="body1"
-          color="white"
+          color="#003459"
           fontFamily={fontFamily.msr}
           fontSize={36}
           fontWeight={600}
         >
-          One Penny at a Time
+          We need help. So do they.
         </Typography>
         <Typography
           variant="body1"
-          color="white"
+          color="#003459"
           fontFamily={fontFamily.msr}
           sx={{ mt: "20px" }}
         >
-          Your small donation can make a big difference.
+          Adopt a pet and give it a home,
           <br />
-          Help provide shelter, care, and love to pets in need. Every penny
-          counts
+          it will be love you back unconditionally.
         </Typography>
         <Button
           sx={{
             py: "15px",
-            color: "#003459",
+            bgcolor: "#003459",
             fontWeight: 600,
             fontFamily: fontFamily.msr,
-            bgcolor: "white",
+            color: "white",
             borderRadius: "25px",
             textTransform: "none",
             width: "250px",
             mt: "40px",
           }}
         >
-          Donate now
+          Adopt now
         </Button>
       </div>
     </div>
   );
 };
 
-export default Banner2;
+export default AdoptionBanner;

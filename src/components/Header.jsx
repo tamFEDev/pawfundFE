@@ -1,5 +1,7 @@
 import { Box, Button, CardMedia, Link, Typography } from "@mui/material";
-import { imgURL } from "../constants";
+import { fontFamily, imgURL } from "../constants";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const pages = [
   {
@@ -29,14 +31,16 @@ const pages = [
 ];
 
 const Header = () => {
+  const [user, setUser] = useState(false);
+  const navigate = useNavigate();
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "0 88px",
-        marginTop: "50px",
+        padding: "0 60px",
+        marginTop: "30px",
       }}
     >
       <div className="left" style={{ display: "flex", alignItems: "center" }}>
@@ -57,6 +61,7 @@ const Header = () => {
             <Link
               key={index}
               sx={{ textDecoration: "none", cursor: "pointer" }}
+              href={item.url}
             >
               <Typography
                 variant="body1"
@@ -70,19 +75,34 @@ const Header = () => {
           ))}
         </Box>
       </div>
-      <Button
-        sx={{
-          p: "15px 35px",
-          textTransform: "none",
-          bgcolor: "#103559",
-          fontWeight: 600,
-          color: "white",
-          borderRadius: "25px",
-          fontFamily: "Montserrat",
-        }}
-      >
-        Login / Register
-      </Button>
+      {user ? (
+        <Typography variant="body1" color="initial" fontFamily={fontFamily.msr}>
+          Welcome pet lover,{" "}
+          <Typography
+            variant="body1"
+            color="initial"
+            fontWeight={600}
+            fontFamily={fontFamily.msr}
+          >
+            phucanhdodang1211@gmail.com
+          </Typography>
+        </Typography>
+      ) : (
+        <Button
+          sx={{
+            p: "15px 35px",
+            textTransform: "none",
+            bgcolor: "#103559",
+            fontWeight: 600,
+            color: "white",
+            borderRadius: "25px",
+            fontFamily: "Montserrat",
+          }}
+          onClick={() => navigate("/login")}
+        >
+          Login / Register
+        </Button>
+      )}
     </div>
   );
 };
