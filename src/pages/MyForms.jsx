@@ -59,7 +59,7 @@ const data = [
 
 const MyForms = () => {
   return (
-    <Card sx={{ p: "30px 30px" }}>
+    <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography
         variant="body1"
         color="initial"

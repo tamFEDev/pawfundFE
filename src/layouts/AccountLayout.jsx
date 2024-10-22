@@ -38,7 +38,7 @@ const AccountLayout = () => {
           gap: 50,
         }}
       >
-        <Card sx={{ width: "280px", p: "30px 30px" }}>
+        <Card sx={{ width: "280px", p: "30px 30px", height: "350px" }}>
           <div className="">
             {tabs.map((t, index) => (
               <Link href={t.url} underline="none" key={index}>
