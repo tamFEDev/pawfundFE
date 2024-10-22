@@ -19,7 +19,7 @@ import CustomDivider from "../components/CustomDivider";
 import PetList from "../components/PetList";
 import AdoptionBanner from "../components/AdoptionBanner";
 import Footer from "../components/Footer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const petDetail = {
   name: "Shibe milo",
@@ -67,7 +67,13 @@ const PetDetail = () => {
     isAdoptPetBefore: null,
     reason: "",
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setOpen(false);
   };

@@ -31,7 +31,7 @@ const pages = [
 ];
 
 const Header = () => {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState(true);
   const navigate = useNavigate();
   return (
     <div

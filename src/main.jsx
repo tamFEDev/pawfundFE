@@ -9,6 +9,7 @@ import Shelters from "./pages/Shelters.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import PetDetail from "./pages/PetDetail.jsx";
+import ShelterDetail from "./pages/ShelterDetail.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/adoption/id",
     element: <PetDetail />,
+  },
+  {
+    path: "/shelters/id",
+    element: <ShelterDetail />,
   },
 ]);
 
