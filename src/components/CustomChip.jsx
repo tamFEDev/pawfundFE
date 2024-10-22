@@ -1,7 +1,15 @@
 import { Typography } from "@mui/material";
 import { fontFamily } from "../constants";
 
-const CustomChip = ({ title, bgColor, index, fontSize, fontWeight, color }) => {
+const CustomChip = ({
+  title,
+  bgColor,
+  index,
+  fontSize,
+  fontWeight,
+  color,
+  border,
+}) => {
   return (
     <Typography
       variant="body1"
@@ -11,6 +19,7 @@ const CustomChip = ({ title, bgColor, index, fontSize, fontWeight, color }) => {
         borderRadius: "10px",
         display: "inline-block",
         p: "7px 14px",
+        border: border,
       }}
       textAlign={"center"}
       fontSize={fontSize}

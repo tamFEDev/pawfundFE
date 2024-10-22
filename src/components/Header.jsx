@@ -1,7 +1,15 @@
-import { Box, Button, CardMedia, Link, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  IconButton,
+  Link,
+  Typography,
+} from "@mui/material";
 import { fontFamily, imgURL } from "../constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const pages = [
   {
@@ -78,14 +86,19 @@ const Header = () => {
       {user ? (
         <Typography variant="body1" color="initial" fontFamily={fontFamily.msr}>
           Welcome pet lover,{" "}
-          <Typography
-            variant="body1"
-            color="initial"
-            fontWeight={600}
-            fontFamily={fontFamily.msr}
-          >
-            phucanhdodang1211@gmail.com
-          </Typography>
+          <div className="" style={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              variant="body1"
+              color="initial"
+              fontWeight={600}
+              fontFamily={fontFamily.msr}
+            >
+              phucanhdodang1211@gmail.com
+            </Typography>
+            <IconButton onClick={() => navigate("/account/profile")}>
+              <ArrowForwardIosIcon fontSize="small" />
+            </IconButton>
+          </div>
         </Typography>
       ) : (
         <Button

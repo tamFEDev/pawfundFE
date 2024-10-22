@@ -10,6 +10,10 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import PetDetail from "./pages/PetDetail.jsx";
 import ShelterDetail from "./pages/ShelterDetail.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import AccountLayout from "./layouts/AccountLayout.jsx";
+import MyForms from "./pages/MyForms.jsx";
+import UploadPets from "./pages/UploadPets.jsx";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +51,32 @@ const router = createBrowserRouter([
   {
     path: "/shelters/id",
     element: <ShelterDetail />,
+  },
+  {
+    path: "/account",
+    element: <AccountLayout />,
+    children: [
+      {
+        path: "/account/profile",
+        element: <MyProfile />,
+      },
+      {
+        path: "/account/my-pet",
+        element: <MyProfile />,
+      },
+      {
+        path: "/account/my-forms",
+        element: <MyForms />,
+      },
+      {
+        path: "/account/my-forms/:id",
+        element: <MyProfile />,
+      },
+      {
+        path: "/account/upload-pet",
+        element: <UploadPets />,
+      },
+    ],
   },
 ]);
 

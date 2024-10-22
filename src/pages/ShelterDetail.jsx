@@ -106,6 +106,11 @@ const ShelterDetail = () => {
     }
   };
 
+  const isFormComplete = () => {
+    const { donation } = form;
+    return donation !== 0;
+  };
+
   const handleSubmit = () => {
     console.log(form);
     handleClose();
@@ -385,7 +390,7 @@ const ShelterDetail = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  bgcolor: "#103559",
+                  bgcolor: isFormComplete() ? "#103559" : "",
                   fontSize: "16px",
                   borderRadius: "10px",
                   fontFamily: fontFamily.msr,
@@ -394,6 +399,7 @@ const ShelterDetail = () => {
                   width: "450px",
                 }}
                 onClick={() => handleSubmit()}
+                disabled={!isFormComplete()}
               >
                 Donate{" "}
                 {form.donation ? `${form.donation.toLocaleString()}đ` : ""}
