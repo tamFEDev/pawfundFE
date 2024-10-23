@@ -1,5 +1,5 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import CustomDivider from "../components/CustomDivider";
 import { fontFamily, imgURL } from "../constants";
 import AdoptionFormCard from "../components/AdoptionFormCard";
@@ -12,6 +12,19 @@ const data = {
 };
 
 const MyProfile = () => {
+  const [showField, setShowField] = useState(false);
+  const [form, setForm] = useState({
+    fullName: "",
+    address: "",
+    contactNumber: "",
+    email: "",
+    newPassword: "",
+    oldPassword: "",
+  });
+
+  const handleShow = () => {
+    setShowField(!showField);
+  };
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography
@@ -62,7 +75,7 @@ const MyProfile = () => {
           label="Address"
           placeholder="Enter your address"
           name="address"
-          value={"form.address"}
+          value={data.address}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -86,7 +99,7 @@ const MyProfile = () => {
           placeholder="Enter your contact number"
           name="contactNumber"
           label="Contact number"
-          value={"form.contactNumber"}
+          value={data.contactNumber}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -100,7 +113,7 @@ const MyProfile = () => {
           label="Email"
           placeholder="Enter your email address"
           name="email"
-          value={"email"}
+          value={data.email}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -113,7 +126,7 @@ const MyProfile = () => {
       <Button
         sx={{
           bgcolor: "#103559",
-          fontSize: "16px",
+          fontSize: "12px",
           fontWeight: 600,
           fontFamily: fontFamily.msr,
           color: "white",
@@ -135,20 +148,84 @@ const MyProfile = () => {
       >
         Authentication
       </Typography>
-      <Button
-        sx={{
-          bgcolor: "#103559",
-          fontSize: "16px",
-          fontWeight: 600,
-          fontFamily: fontFamily.msr,
-          color: "white",
-          p: "10px 20px",
-          textTransform: "none",
-          borderRadius: "10px",
-        }}
+      {showField && (
+        <div
+          className="contact-email"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 10,
+            marginTop: "20px",
+          }}
+        >
+          <TextField
+            id=""
+            placeholder="Enter your old password"
+            name="oldPassword"
+            label="Old Password"
+            value={form.oldPassword}
+            //   onChange={(e) => handleChangeForm(e)}
+            fullWidth
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
+          />
+          <TextField
+            id=""
+            label="New Password"
+            placeholder="Enter your new password"
+            name="newPassword"
+            value={form.newPassword}
+            //   onChange={(e) => handleChangeForm(e)}
+            fullWidth
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
+          />
+        </div>
+      )}
+      <div
+        className=""
+        style={{ display: "flex", gap: 10, marginTop: showField && "15px" }}
       >
-        Change Password
-      </Button>
+        <Button
+          sx={{
+            bgcolor: !showField && "#103559",
+            border: showField && "1px solid #103559",
+            fontSize: "12px",
+            fontWeight: 600,
+            fontFamily: fontFamily.msr,
+            color: !showField ? "white" : "#103559",
+            p: "10px 20px",
+            textTransform: "none",
+            borderRadius: "10px",
+          }}
+          onClick={() => handleShow()}
+        >
+          {showField ? "Cancel" : "Change Password"}
+        </Button>
+        {showField && (
+          <Button
+            sx={{
+              bgcolor: "#103559",
+              fontSize: "12px",
+              fontWeight: 600,
+              fontFamily: fontFamily.msr,
+              color: "white",
+              p: "10px 20px",
+              textTransform: "none",
+              borderRadius: "10px",
+            }}
+            onClick={() => handleShow()}
+          >
+            Save password
+          </Button>
+        )}
+      </div>
     </Card>
   );
 };

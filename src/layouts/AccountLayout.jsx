@@ -34,7 +34,7 @@ const AccountLayout = () => {
           display: "flex",
           justifyContent: "space-between",
           padding: "0 100px",
-          marginTop: "100px",
+          marginTop: "50px",
           gap: 50,
         }}
       >
