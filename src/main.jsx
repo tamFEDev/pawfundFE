@@ -14,6 +14,8 @@ import MyProfile from "./pages/MyProfile.jsx";
 import AccountLayout from "./layouts/AccountLayout.jsx";
 import MyForms from "./pages/MyForms.jsx";
 import UploadPets from "./pages/UploadPets.jsx";
+import { Dashboard } from "@mui/icons-material";
+import DashboardLayout from "./layouts/DashboardLayout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +77,16 @@ const router = createBrowserRouter([
       {
         path: "/account/upload-pet",
         element: <UploadPets />,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "/dashboard/shelter",
+        element: <DashboardLayout />,
       },
     ],
   },
