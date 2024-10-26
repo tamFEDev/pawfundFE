@@ -12,8 +12,9 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { fontFamily, imgURL } from "../constants";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   useEffect(() => {
@@ -52,6 +53,24 @@ const Register = () => {
   };
 
   const navigate = useNavigate();
+
+  const handleRegister = async () => {
+    const body = {
+      username: form.email,
+      fullname: form.fullName,
+      email: form.email,
+      phoneNumber: "",
+      address: "",
+      password: form.password,
+    };
+    try {
+      const res = await axios.post(`${BASE_URL}/api/Auth/Register`, body);
+      console.log("Registration successful:", res.data);
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div style={{}}>
@@ -115,7 +134,7 @@ const Register = () => {
                 <OutlinedInput
                   id=""
                   placeholder="Enter your full name"
-                  name="firstName"
+                  name="fullName"
                   value={form.fullName}
                   onChange={(e) => handleInputChange(e)}
                   sx={{
@@ -231,7 +250,7 @@ const Register = () => {
                   fontSize: "16px",
                   fontFamily: fontFamily.msr,
                 }}
-                onClick={() => navigate("/login")}
+                onClick={() => handleRegister()}
               >
                 Register
               </Button>

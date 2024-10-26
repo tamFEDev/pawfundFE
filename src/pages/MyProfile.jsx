@@ -1,18 +1,15 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomDivider from "../components/CustomDivider";
-import { fontFamily, imgURL } from "../constants";
-import AdoptionFormCard from "../components/AdoptionFormCard";
+import { BASE_URL, fontFamily } from "../constants";
 
-const data = {
-  fullName: "Do Dang Phuc Anh",
-  address: "123 Main Street, Anytown USA",
-  contactNumber: "(+84) 0987635263",
-  email: "phucanhdodang1211@gmail.com",
-};
+import { useGlobalContext } from "../GlobalProvider";
+import axios from "axios";
 
 const MyProfile = () => {
+  const { user, token, setUser } = useGlobalContext();
   const [showField, setShowField] = useState(false);
+  const [update, setUpdate] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     address: "",
@@ -22,9 +19,61 @@ const MyProfile = () => {
     oldPassword: "",
   });
 
+  useEffect(() => {
+    if (user) {
+      setForm({
+        fullName: user.fullname,
+        address: user.address,
+        contactNumber: user.phoneNumber,
+        email: user.email,
+        newPassword: "",
+        oldPassword: "",
+      });
+    }
+  }, [user]);
+
+  const handleUpdate = async () => {
+    setUpdate(!update);
+    if (update) {
+      try {
+        const body = {
+          fullname: form.fullName,
+          email: form.email,
+          phoneNumber: form.contactNumber,
+          address: form.address,
+          password: form.newPassword,
+        };
+        const res = await axios.put(
+          `${BASE_URL}/api/Users/UpdateProfile-by-user`,
+          body,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.status >= 200 && res.status < 300) {
+          const updatedUser = body; // Assuming the response contains the updated user data
+          setUser(updatedUser); // Update the user state
+          localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage with new user data
+          console.log(updatedUser);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   const handleShow = () => {
     setShowField(!showField);
   };
+
+  const handleChangeForm = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography
@@ -61,13 +110,19 @@ const MyProfile = () => {
           placeholder="Enter your full name"
           name="fullName"
           label="Full name"
-          value={data.fullName}
-          //   onChange={(e) => handleChangeForm(e)}
+          value={form.fullName}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
+          }}
+          InputProps={{
+            readOnly: update ? false : true,
+          }}
+          InputLabelProps={{
+            shrink: form.fullName ? true : undefined,
           }}
         />
         <TextField
@@ -75,13 +130,19 @@ const MyProfile = () => {
           label="Address"
           placeholder="Enter your address"
           name="address"
-          value={data.address}
-          //   onChange={(e) => handleChangeForm(e)}
+          value={form.address}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
+          }}
+          InputProps={{
+            readOnly: update ? false : true,
+          }}
+          InputLabelProps={{
+            shrink: form.fullName ? true : undefined,
           }}
         />
       </div>
@@ -99,13 +160,19 @@ const MyProfile = () => {
           placeholder="Enter your contact number"
           name="contactNumber"
           label="Contact number"
-          value={data.contactNumber}
-          //   onChange={(e) => handleChangeForm(e)}
+          value={form.contactNumber}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
+          }}
+          InputProps={{
+            readOnly: update ? false : true,
+          }}
+          InputLabelProps={{
+            shrink: form.fullName ? true : undefined,
           }}
         />
         <TextField
@@ -113,31 +180,57 @@ const MyProfile = () => {
           label="Email"
           placeholder="Enter your email address"
           name="email"
-          value={data.email}
-          //   onChange={(e) => handleChangeForm(e)}
+          value={form.email}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
           }}
+          InputProps={{
+            readOnly: update ? false : true,
+          }}
+          InputLabelProps={{
+            shrink: form.fullName ? true : undefined,
+          }}
         />
       </div>
-      <Button
-        sx={{
-          bgcolor: "#103559",
-          fontSize: "12px",
-          fontWeight: 600,
-          fontFamily: fontFamily.msr,
-          color: "white",
-          p: "10px 20px",
-          textTransform: "none",
-          borderRadius: "10px",
-          marginTop: "15px",
-        }}
-      >
-        Update Profile
-      </Button>
+      <div className="" style={{ display: "flex", gap: 10, marginTop: "15px" }}>
+        <Button
+          sx={{
+            bgcolor: !update && "#103559",
+            border: update && "1px solid #103559",
+            fontSize: "12px",
+            fontWeight: 600,
+            fontFamily: fontFamily.msr,
+            color: !update ? "white" : "#103559",
+            p: "10px 20px",
+            textTransform: "none",
+            borderRadius: "10px",
+          }}
+          onClick={() => handleUpdate()}
+        >
+          {update ? "Cancel" : "Update Profile"}
+        </Button>
+        {update && (
+          <Button
+            sx={{
+              bgcolor: "#103559",
+              fontSize: "12px",
+              fontWeight: 600,
+              fontFamily: fontFamily.msr,
+              color: "white",
+              p: "10px 20px",
+              textTransform: "none",
+              borderRadius: "10px",
+            }}
+            onClick={() => handleUpdate()}
+          >
+            Save Profile
+          </Button>
+        )}
+      </div>
       <Typography
         variant="body1"
         color="initial"

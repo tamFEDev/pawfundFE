@@ -1,9 +1,10 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { Card, CardMedia, Link, List, Typography } from "@mui/material";
+import { Button, Card, CardMedia, Link, List, Typography } from "@mui/material";
 import { fontFamily } from "../constants";
 import CustomDivider from "../components/CustomDivider";
+import { useGlobalContext } from "../GlobalProvider";
 
 const tabs = [
   {
@@ -25,6 +26,13 @@ const tabs = [
 ];
 
 const AccountLayout = () => {
+  const { logout, loading } = useGlobalContext();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div>
       <Header />
@@ -54,18 +62,18 @@ const AccountLayout = () => {
                 <CustomDivider padding={"20px 0"} />
               </Link>
             ))}
-            <Link href="/login" underline="none">
+            <Button onClick={() => handleLogout()}>
               <Typography
                 variant="body1"
                 color="initial"
                 fontSize={18}
                 fontFamily={fontFamily.msr}
                 fontWeight={600}
-                sx={{ marginTop: "20px" }}
+                sx={{ marginTop: "20px", cursor: "pointer" }}
               >
                 Log out
               </Typography>
-            </Link>
+            </Button>
           </div>
         </Card>
         <Outlet />

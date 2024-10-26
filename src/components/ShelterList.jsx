@@ -1,5 +1,7 @@
-import { imgURL } from "../constants";
+import { useEffect } from "react";
+import { BASE_URL, imgURL } from "../constants";
 import ShelterCard from "./ShelterCard";
+import axios from "axios";
 
 const shelterInfo = [
   {
@@ -64,6 +66,19 @@ const shelterInfo = [
   },
 ];
 const ShelterList = ({ mb }) => {
+  // useEffect(() => {
+  //   const fetchShelters = async () => {
+  //     try {
+  //       const response = await axios.get(`${BASE_URL}`);
+  //       const data = await response.json();
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error("Error fetching shelters:", error);
+  //     }
+  //   };
+
+  //   fetchShelters();
+  // });
   return (
     <div
       className="shelter-list"

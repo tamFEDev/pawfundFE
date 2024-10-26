@@ -1,5 +1,6 @@
 import { imgURL } from "../constants";
 import PetCard from "./PetCard";
+import StaffPetCard from "./StaffPetCard";
 
 const petInfo = [
   {
@@ -60,30 +61,54 @@ const petInfo = [
   },
 ];
 
-const PetList = ({ mb, amount }) => {
+const PetList = ({ mb, amount, mt, jc, isStaff }) => {
   return (
-    <div
-      className="pet-list"
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 26,
-        marginTop: "30px",
-        justifyContent: "center",
-        marginBottom: mb,
-      }}
-    >
-      {petInfo.slice(0, amount).map((pet, index) => (
-        <PetCard
-          key={index}
-          image={pet.image}
-          name={pet.name}
-          gender={pet.gener}
-          type={pet.type}
-          location={pet.location}
-        />
-      ))}
-    </div>
+    <>
+      {isStaff ? (
+        <div
+          className="pet-list"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 26,
+          }}
+        >
+          {petInfo.slice(0, amount).map((pet, index) => (
+            <StaffPetCard
+              key={index}
+              image={pet.image}
+              name={pet.name}
+              gender={pet.gener}
+              type={pet.type}
+              location={pet.location}
+            />
+          ))}
+        </div>
+      ) : (
+        <div
+          className="pet-list"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 26,
+            marginTop: "30px",
+            justifyContent: "center",
+            marginBottom: mb,
+          }}
+        >
+          {petInfo.slice(0, amount).map((pet, index) => (
+            <PetCard
+              key={index}
+              image={pet.image}
+              name={pet.name}
+              gender={pet.gener}
+              type={pet.type}
+              location={pet.location}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

@@ -3,7 +3,6 @@ import {
   Button,
   CardMedia,
   Modal,
-  OutlinedInput,
   Typography,
   TextField,
   FormControl,

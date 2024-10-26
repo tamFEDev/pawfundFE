@@ -1,27 +1,39 @@
 import {
+  Box,
   Button,
   Card,
+  CardMedia,
+  Modal,
   OutlinedInput,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomDivider from "../components/CustomDivider";
-import { fontFamily, imgURL } from "../constants";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import AdoptionFormCard from "../components/AdoptionFormCard";
+import { useGlobalContext } from "../GlobalProvider";
+import axios from "axios";
 
-const data = {
-  fullName: "Do Dang Phuc Anh",
-  address: "123 Main Street, Anytown USA",
-  contactNumber: "(+84) 0987635263",
-  email: "phucanhdodang1211@gmail.com",
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  // border: "2px solid #000",
+  boxShadow: 24,
+  // p: 4,
+  borderRadius: "10px",
 };
 
 const UploadPets = () => {
   const [showField, setShowField] = useState(false);
+  const { user, token } = useGlobalContext();
   const [form, setForm] = useState({
     fullName: "",
-    address: "",
+    address: null,
     contactNumber: "",
     email: "",
     petImg: "",
@@ -36,9 +48,81 @@ const UploadPets = () => {
     gender: "",
   });
 
-  const handleShow = () => {
-    setShowField(!showField);
+  const [viewImage, setViewImage] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        fullName: user.fullname,
+        address: user.address,
+        contactNumber: user.phoneNumber,
+        email: user.email,
+        newPassword: "",
+        oldPassword: "",
+      });
+    }
+  }, [user]);
+
+  const handleChangeForm = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
+
+  const handleOpen = () => {
+    setViewImage(true);
+  };
+
+  const handleClose = () => {
+    setViewImage(false);
+  };
+
+  const handleSavePet = async () => {
+    const body = {
+      petName: form.petName,
+      petType: form.petBreed,
+      age: parseInt(form.petAge), // Convert age to an integer
+      gender: form.gender,
+      address: form.address,
+      medicalCondition: form.petMedical,
+      description: form.petDesc,
+      color: form.petColor,
+      size: form.petSize,
+      contactPhoneNumber: form.contactNumber,
+      contactEmail: form.email,
+      petCategoryId: form.petType.toLowerCase() === "dog" ? 1 : 2, // Setting category ID as per pet type
+      isAdopted: false,
+      isApproved: false,
+      petImages: [
+        {
+          imageDescription: "Pet image",
+          imageUrl: form.petImg,
+          isThumbnailImage: true,
+        },
+      ],
+    };
+
+    try {
+      const res = await axios.post(`${BASE_URL}/api/Users/AddNewPet`, body, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status >= 200 && res.status < 300) {
+        console.log("Pet uploaded successfully:", res.data);
+        return res.data;
+      }
+    } catch (err) {
+      console.error(
+        "Error uploading pet:",
+        err.response ? err.response.data : err.message
+      );
+    } finally {
+      console.log("Request payload:", body);
+    }
+  };
+
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography
@@ -75,7 +159,7 @@ const UploadPets = () => {
           placeholder="Enter your full name"
           name="fullName"
           label="Full name"
-          value={data.fullName}
+          value={form.fullName}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -89,7 +173,7 @@ const UploadPets = () => {
           label="Address"
           placeholder="Enter your address"
           name="address"
-          value={data.address}
+          value={form.address}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -113,7 +197,7 @@ const UploadPets = () => {
           placeholder="Enter your contact number"
           name="contactNumber"
           label="Contact number"
-          value={data.contactNumber}
+          value={form.contactNumber}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -127,7 +211,7 @@ const UploadPets = () => {
           label="Email"
           placeholder="Enter your email address"
           name="email"
-          value={data.email}
+          value={form.email}
           //   onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
@@ -162,7 +246,7 @@ const UploadPets = () => {
           name="petName"
           label="Pet name"
           value={form.petName}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -174,9 +258,9 @@ const UploadPets = () => {
           id=""
           label="Pet type"
           placeholder="Enter type of pet"
-          name="address"
+          name="petType"
           value={form.petType}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -188,9 +272,9 @@ const UploadPets = () => {
           id=""
           label="Pet breed"
           placeholder="Enter breed of pet"
-          name="address"
+          name="petBreed"
           value={form.petBreed}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -211,10 +295,10 @@ const UploadPets = () => {
         <TextField
           id=""
           placeholder="Enter pet name"
-          name="petName"
+          name="petAge"
           label="Pet age"
           value={form.petAge}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -226,9 +310,9 @@ const UploadPets = () => {
           id=""
           label="Pet color"
           placeholder="Enter type of pet"
-          name="address"
-          value={form.petType}
-          //   onChange={(e) => handleChangeForm(e)}
+          name="petColor"
+          value={form.petColor}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -240,9 +324,9 @@ const UploadPets = () => {
           id=""
           label="Pet size"
           placeholder="Enter breed of pet"
-          name="address"
-          value={form.petBreed}
-          //   onChange={(e) => handleChangeForm(e)}
+          name="petSize"
+          value={form.petSize}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -264,10 +348,10 @@ const UploadPets = () => {
         <TextField
           id=""
           placeholder="Enter pet name"
-          name="petName"
+          name="petMedical"
           label="Medical condition"
           value={form.petMedical}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -279,9 +363,9 @@ const UploadPets = () => {
           id=""
           label="Pet gender"
           placeholder="Enter type of pet"
-          name="address"
+          name="gender"
           value={form.gender}
-          //   onChange={(e) => handleChangeForm(e)}
+          onChange={(e) => handleChangeForm(e)}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -303,10 +387,9 @@ const UploadPets = () => {
           id=""
           label="Pet image"
           placeholder="Enter type of pet"
-          name="address"
+          name="petImg"
           value={form.petImg}
-          //   onChange={(e) => handleChangeForm(e)}
-
+          onChange={(e) => handleChangeForm(e)}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
@@ -325,6 +408,7 @@ const UploadPets = () => {
             textTransform: "none",
             borderRadius: "10px",
           }}
+          onClick={() => handleOpen()}
         >
           View Image
         </Button>
@@ -333,7 +417,8 @@ const UploadPets = () => {
         id=""
         label="About pet"
         value={form.petDesc}
-        // onChange={}
+        name="petDesc"
+        onChange={(e) => handleChangeForm(e)}
         fullWidth
         multiline
         sx={{
@@ -378,11 +463,21 @@ const UploadPets = () => {
             color: "white",
           }}
           // disabled={!isFormComplete()}
-          // onClick={() => handleContinueForm()}
+          onClick={() => handleSavePet()}
         >
           Submit Pet for Shelter
         </Button>
       </div>
+      <Modal
+        open={viewImage}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <CardMedia component={"img"} src={form.petImg} />
+        </Box>
+      </Modal>
     </Card>
   );
 };

@@ -14,8 +14,12 @@ import MyProfile from "./pages/MyProfile.jsx";
 import AccountLayout from "./layouts/AccountLayout.jsx";
 import MyForms from "./pages/MyForms.jsx";
 import UploadPets from "./pages/UploadPets.jsx";
-import { Dashboard } from "@mui/icons-material";
+// import { Dashboard } from "@mui/icons-material";
 import DashboardLayout from "./layouts/DashboardLayout.jsx";
+import GlobalProvider from "./GlobalProvider.jsx";
+import AboutShelter from "./pages/AboutShelter.jsx";
+import ShelterPet from "./pages/ShelterPet.jsx";
+import AdoptionForms from "./pages/AdoptionForms.jsx";
 
 const router = createBrowserRouter([
   {
@@ -59,23 +63,23 @@ const router = createBrowserRouter([
     element: <AccountLayout />,
     children: [
       {
-        path: "/account/profile",
+        path: "profile",
         element: <MyProfile />,
       },
       {
-        path: "/account/my-pet",
+        path: "my-pet",
         element: <MyProfile />,
       },
       {
-        path: "/account/my-forms",
+        path: "my-forms",
         element: <MyForms />,
       },
       {
-        path: "/account/my-forms/:id",
+        path: "my-forms/:id",
         element: <MyProfile />,
       },
       {
-        path: "/account/upload-pet",
+        path: "upload-pet",
         element: <UploadPets />,
       },
     ],
@@ -85,8 +89,28 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
-        path: "/dashboard/shelter",
-        element: <DashboardLayout />,
+        path: "/dashboard/staff/about-shelter",
+        element: <AboutShelter />,
+      },
+      {
+        path: "/dashboard/staff/pets",
+        element: <ShelterPet />,
+      },
+      {
+        path: "/dashboard/staff/pets/:id",
+        element: <AboutShelter />,
+      },
+      {
+        path: "/dashboard/staff/adoption-forms",
+        element: <AdoptionForms />,
+      },
+      {
+        path: "/dashboard/staff/adoption-forms/:id",
+        element: <AboutShelter />,
+      },
+      {
+        path: "/dashboard/staff/events",
+        element: <AboutShelter />,
       },
     ],
   },
@@ -94,6 +118,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <GlobalProvider>
+      <RouterProvider router={router} />
+    </GlobalProvider>
   </StrictMode>
 );

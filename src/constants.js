@@ -29,3 +29,5 @@ export const imgURL = {
 export const fontFamily = {
   msr: "Montserrat",
 };
+
+export const BASE_URL = "http://localhost:5111";

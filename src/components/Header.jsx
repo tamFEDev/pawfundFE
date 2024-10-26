@@ -7,40 +7,26 @@ import {
   Typography,
 } from "@mui/material";
 import { fontFamily, imgURL } from "../constants";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { useGlobalContext } from "../GlobalProvider";
+import { useEffect } from "react";
 
 const pages = [
-  {
-    title: "Home",
-    url: "/home",
-  },
-  {
-    title: "Donation",
-    url: "/donation",
-  },
-  {
-    title: "Adoption",
-    url: "/adoption",
-  },
-  {
-    title: "Volunteer",
-    url: "/volunteer",
-  },
-  {
-    title: "Shelters",
-    url: "/shelters",
-  },
-  {
-    title: "Contact us",
-    url: "/contact-us",
-  },
+  { title: "Home", url: "/home" },
+  { title: "Donation", url: "/donation" },
+  { title: "Adoption", url: "/adoption" },
+  { title: "Volunteer", url: "/volunteer" },
+  { title: "Shelters", url: "/shelters" },
+  { title: "Contact us", url: "/contact-us" },
 ];
 
-const Header = () => {
-  const [user, setUser] = useState(true);
+const Header = ({}) => {
   const navigate = useNavigate();
+  const { user } = useGlobalContext();
+  // useEffect(() => {
+  //   console.log(token);
+  // });
   return (
     <div
       style={{
@@ -83,39 +69,23 @@ const Header = () => {
           ))}
         </Box>
       </div>
-      {user ? (
-        <Typography variant="body1" color="initial" fontFamily={fontFamily.msr}>
-          Welcome pet lover,{" "}
-          <div className="" style={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              variant="body1"
-              color="initial"
-              fontWeight={600}
-              fontFamily={fontFamily.msr}
-            >
-              phucanhdodang1211@gmail.com
-            </Typography>
-            <IconButton onClick={() => navigate("/account/profile")}>
-              <ArrowForwardIosIcon fontSize="small" />
-            </IconButton>
-          </div>
-        </Typography>
-      ) : (
-        <Button
-          sx={{
-            p: "15px 35px",
-            textTransform: "none",
-            bgcolor: "#103559",
-            fontWeight: 600,
-            color: "white",
-            borderRadius: "25px",
-            fontFamily: "Montserrat",
-          }}
-          onClick={() => navigate("/login")}
-        >
-          Login / Register
-        </Button>
-      )}
+
+      <Typography variant="body1" color="initial" fontFamily={fontFamily.msr}>
+        Welcome pet lover,{" "}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Typography
+            variant="body1"
+            color="initial"
+            fontWeight={600}
+            fontFamily={fontFamily.msr}
+          >
+            {user?.email}
+          </Typography>
+          <IconButton onClick={() => navigate("/account/profile")}>
+            <ArrowForwardIosIcon fontSize="small" />
+          </IconButton>
+        </div>
+      </Typography>
     </div>
   );
 };

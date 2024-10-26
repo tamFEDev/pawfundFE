@@ -14,8 +14,10 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { fontFamily, imgURL } from "../constants";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../GlobalProvider";
 
 const Login = () => {
+  const { user, login } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -43,6 +45,20 @@ const Login = () => {
   };
 
   const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    // Make handleLogin async
+    try {
+      const body = {
+        email: form.email,
+        password: form.password,
+      };
+      await login(body); // Call login function from context
+      navigate("/");
+    } catch (err) {
+      console.log("Login failed: ", err);
+    }
+  };
 
   return (
     <div style={{}}>
@@ -171,7 +187,7 @@ const Login = () => {
                   fontSize: "16px",
                   fontFamily: fontFamily.msr,
                 }}
-                onClick={() => navigate("/")}
+                onClick={() => handleLogin()}
               >
                 Login
               </Button>

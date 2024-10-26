@@ -1,8 +1,9 @@
 import { Card, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import CustomDivider from "../components/CustomDivider";
 import { fontFamily, imgURL } from "../constants";
 import AdoptionFormCard from "../components/AdoptionFormCard";
+import { useGlobalContext } from "../GlobalProvider";
 
 const data = [
   {
@@ -58,6 +59,10 @@ const data = [
 ];
 
 const MyForms = () => {
+  const { user, token } = useGlobalContext();
+  useEffect(() => {
+    console.log({ user: user, token: token });
+  });
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography

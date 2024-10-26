@@ -1,86 +1,85 @@
-import { useEffect } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import axios from "axios";
-import { createContext, useContext, useState } from "react";
 import PropTypes from "prop-types";
-// import { BASE_URL } from "./constants"; // Import your constants from a separate file
+import { BASE_URL } from "./constants";
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const BASE_URL = "http://localhost:3000";
-
 const GlobalProvider = ({ children }) => {
-  const [user, setUser] = useState({ name: "", role: "" });
-  const [isLogged, setIsLogged] = useState(false);
-  const [token, setToken] = useState(null);
+  // Initialize token and user from localStorage
+  const [token, setToken] = useState(
+    localStorage.getItem("accessToken") || null
+  );
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [isLogged, setIsLogged] = useState(!!user);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const onRefresh = async () => {
-      setLoading(true);
-      const userData = await loadUserAfterRefresh();
-      setLoading(false);
-      if (!userData) {
-        setIsLogged(false);
+      if (token && !user) {
+        setLoading(true);
+        await loadUserAfterRefresh();
+        setLoading(false);
       }
     };
     onRefresh();
-  }, []);
+  }, [token, user]);
 
   const loadUserAfterRefresh = async () => {
     try {
-      const storedToken = localStorage.getItem("accessToken");
-      if (storedToken) {
-        const userData = await getLoggedUser(storedToken);
-        if (userData) {
-          setIsLogged(true);
-          setUser(userData);
-          setToken(storedToken);
-          return userData;
-        }
-        return null;
+      const userData = await getLoggedUser(token);
+      if (userData) {
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        setIsLogged(true);
       } else {
-        console.log("Invalid token");
-        return null;
+        setIsLogged(false);
       }
     } catch (err) {
       console.log("Failed to load user: ", err.message);
-      return null;
     }
   };
 
   const getLoggedUser = async (accessToken) => {
-    setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/user/getUser`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/api/Admin/GetCurrentLoginUser`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       if (response.status >= 200 && response.status < 300) {
-        setUser(response.data);
-        setIsLogged(true);
+        return response.data;
       }
     } catch (err) {
       console.log("Error fetching user: ", err);
-      setIsLogged(false);
-    } finally {
-      setLoading(false);
     }
+    return null;
   };
 
   const login = async (body) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, body);
+      const response = await axios.post(`${BASE_URL}/api/Auth/Login`, body);
       if (response.status >= 200 && response.status < 300) {
-        const { accessToken } = response.data;
-        localStorage.setItem("accessToken", accessToken);
-        setToken(accessToken);
-        await getLoggedUser(accessToken);
+        const { token } = response.data;
+        localStorage.setItem("accessToken", token);
+        setToken(token);
+        const userData = await getLoggedUser(token);
+        if (userData) {
+          setUser(userData);
+          localStorage.setItem("user", JSON.stringify(userData));
+          setIsLogged(true);
+        }
       }
     } catch (err) {
-      console.log(err);
+      console.log("Login error: ", err);
     }
   };
 
@@ -89,6 +88,7 @@ const GlobalProvider = ({ children }) => {
     setIsLogged(false);
     setToken(null);
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
   };
 
   return (
