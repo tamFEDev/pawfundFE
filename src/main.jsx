@@ -20,6 +20,7 @@ import GlobalProvider from "./GlobalProvider.jsx";
 import AboutShelter from "./pages/AboutShelter.jsx";
 import ShelterPet from "./pages/ShelterPet.jsx";
 import AdoptionForms from "./pages/AdoptionForms.jsx";
+import MyPet from "./pages/MyPet.jsx";
 
 const router = createBrowserRouter([
   {
@@ -63,23 +64,23 @@ const router = createBrowserRouter([
     element: <AccountLayout />,
     children: [
       {
-        path: "profile",
+        path: "/account/profile",
         element: <MyProfile />,
       },
       {
-        path: "my-pet",
-        element: <MyProfile />,
+        path: "/account/my-pets",
+        element: <MyPet />,
       },
       {
-        path: "my-forms",
+        path: "/account/my-forms",
         element: <MyForms />,
       },
       {
-        path: "my-forms/:id",
+        path: "/account/my-forms/:id",
         element: <MyProfile />,
       },
       {
-        path: "upload-pet",
+        path: "/account/upload-pet",
         element: <UploadPets />,
       },
     ],

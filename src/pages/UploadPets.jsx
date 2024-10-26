@@ -167,6 +167,9 @@ const UploadPets = () => {
               borderRadius: "10px",
             },
           }}
+          InputLabelProps={{
+            shrink: form.fullName ? true : undefined,
+          }}
         />
         <TextField
           id=""
@@ -180,6 +183,9 @@ const UploadPets = () => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
+          }}
+          InputLabelProps={{
+            shrink: form.address ? true : undefined,
           }}
         />
       </div>
@@ -205,7 +211,11 @@ const UploadPets = () => {
               borderRadius: "10px",
             },
           }}
+          InputLabelProps={{
+            shrink: form.contactNumber ? true : undefined,
+          }}
         />
+
         <TextField
           id=""
           label="Email"
@@ -218,6 +228,9 @@ const UploadPets = () => {
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
+          }}
+          InputLabelProps={{
+            shrink: form.email ? true : undefined,
           }}
         />
       </div>

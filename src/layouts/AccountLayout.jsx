@@ -13,7 +13,7 @@ const tabs = [
   },
   {
     name: "My Pets",
-    url: "/account/profile",
+    url: "/account/my-pets",
   },
   {
     name: "My Adoption Forms",
@@ -62,14 +62,17 @@ const AccountLayout = () => {
                 <CustomDivider padding={"20px 0"} />
               </Link>
             ))}
-            <Button onClick={() => handleLogout()}>
+            <Button
+              onClick={() => handleLogout()}
+              sx={{ marginTop: "20px", textTransform: "none" }}
+            >
               <Typography
                 variant="body1"
                 color="initial"
                 fontSize={18}
                 fontFamily={fontFamily.msr}
                 fontWeight={600}
-                sx={{ marginTop: "20px", cursor: "pointer" }}
+                sx={{ cursor: "pointer" }}
               >
                 Log out
               </Typography>

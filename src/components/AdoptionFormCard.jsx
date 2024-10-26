@@ -285,26 +285,28 @@ const AdoptionFormCard = ({
                   },
                 }}
               />
-              {status === "Rejected" ? (
-                <TextField
-                  id=""
-                  label="Decline reason"
-                  placeholder=""
-                  name="reason"
-                  value={"Sorry you're not capable"}
-                  // onChange={(e) => handleChangeForm(e)}
-                  multiline
-                  fullWidth
-                  sx={{
-                    margin: "20px 0",
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "10px",
-                    },
-                  }}
-                />
-              ) : (
-                ""
-              )}
+              <TextField
+                id=""
+                label={
+                  status === "Rejected" ? "Decline reason" : "Shelter message"
+                }
+                placeholder=""
+                name="reason"
+                value={
+                  status === "Rejected"
+                    ? "Sorry you're not capable"
+                    : "COngrats your application has been approved"
+                }
+                // onChange={(e) => handleChangeForm(e)}
+                multiline
+                fullWidth
+                sx={{
+                  margin: "20px 0",
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
             </div>
             <div
               className="button"
@@ -329,6 +331,21 @@ const AdoptionFormCard = ({
                 onClick={() => handleClose()}
               >
                 Cancel
+              </Button>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  bgcolor: "#103559",
+                  color: "white",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  // border: "1px solid #103559",
+                  fontFamily: fontFamily.msr,
+                  p: "12px 30px",
+                }}
+              >
+                View pet
               </Button>
             </div>
           </Box>

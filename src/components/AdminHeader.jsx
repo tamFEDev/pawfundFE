@@ -25,7 +25,7 @@ const AdminHeader = () => {
         fontFamily={fontFamily.msr}
         sx={{ display: "flex", alignItems: "center", gap: 1 }}
       >
-        Welcome {user.role === "staff" ? "Shelter Staff" : "Admin"},{" "}
+        {/* Welcome {user.role === "staff" ? "Shelter Staff" : "Admin"},{" "} */}
         <div
           className=""
           style={{ display: "flex", alignItems: "center", gap: 5 }}
@@ -36,9 +36,9 @@ const AdminHeader = () => {
             fontWeight={600}
             fontFamily={fontFamily.msr}
           >
-            {user.email}
+            {/* {user.email} */}
           </Typography>
-          <IconButton onClick={() => navigate("/account/profile")}>
+          <IconButton onClick={() => navigate("/login")}>
             <LogoutIcon fontSize="small" />
           </IconButton>
         </div>
