@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CardMedia,
   Typography,
@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../GlobalProvider";
 
 const Login = () => {
-  const { user, login } = useGlobalContext();
+  const { user, login, loading, setLoading } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -47,18 +47,37 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // Make handleLogin async
+    setLoading(true); // Start loading when login is initiated
     try {
       const body = {
         email: form.email,
         password: form.password,
       };
-      await login(body); // Call login function from context
-      navigate("/");
+      await login(body);
     } catch (err) {
       console.log("Login failed: ", err);
+    } finally {
+      setLoading(false); // Stop loading after login completes
     }
   };
+
+  // Use useEffect to redirect based on user role once user data is available
+  useEffect(() => {
+    if (user?.roleName && !loading) {
+      // Ensure user is defined and loading has stopped
+      switch (user.roleName) {
+        case "Staff":
+          navigate("/dashboard/staff/about-shelter");
+          break;
+        case "User":
+          navigate("/");
+          break;
+        default:
+          navigate("/");
+          break;
+      }
+    }
+  }, [user, loading, navigate]); // Depend on user and loading states
 
   return (
     <div style={{}}>

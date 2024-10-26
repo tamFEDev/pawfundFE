@@ -20,6 +20,10 @@ const MyProfile = () => {
   });
 
   useEffect(() => {
+    console.log(user);
+  });
+
+  useEffect(() => {
     if (user) {
       setForm({
         fullName: user.fullname,

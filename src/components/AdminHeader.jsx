@@ -5,8 +5,14 @@ import { useGlobalContext } from "../GlobalProvider";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const AdminHeader = () => {
-  const { user } = useGlobalContext();
+  const { user, logout } = useGlobalContext();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div
       style={{
@@ -38,7 +44,7 @@ const AdminHeader = () => {
           >
             {/* {user.email} */}
           </Typography>
-          <IconButton onClick={() => navigate("/login")}>
+          <IconButton onClick={() => handleLogout()}>
             <LogoutIcon fontSize="small" />
           </IconButton>
         </div>
