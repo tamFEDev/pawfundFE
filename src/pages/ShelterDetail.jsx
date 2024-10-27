@@ -13,7 +13,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import Header from "../components/Header";
-import { fontFamily, imgURL } from "../constants";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import CustomChip from "../components/CustomChip";
 import PetDetailTag from "../components/PetDetailTag";
 import CustomDivider from "../components/CustomDivider";
@@ -22,6 +22,7 @@ import AdoptionBanner from "../components/AdoptionBanner";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 
 const donationValue = [
   { name: "10.000đ", value: 10000 },
@@ -46,20 +47,31 @@ const style = {
 const ShelterDetail = () => {
   const [open, setOpen] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
+  const [shelterDetail, setShelterDetail] = useState({});
   const [form, setForm] = useState({
     donation: 0,
     note: "",
   });
   const [customDonation, setCustomDonation] = useState(null);
-  const location = useLocation();
+
   const { id } = useParams();
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-      } catch (err) {}
+        const res = await axios.get(
+          `${BASE_URL}/api/Shelter/GetInformationShelter/${id}`
+        );
+        if (res.status == 200) {
+          setShelterDetail(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
     };
-  });
+
+    fetchDetail();
+  }, [id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -113,8 +125,6 @@ const ShelterDetail = () => {
     handleClose();
   };
 
-  const shelterDetail = location.state || {};
-
   return (
     <div>
       <Header />
@@ -134,7 +144,7 @@ const ShelterDetail = () => {
         >
           <CardMedia
             component={"img"}
-            src={imgURL.shelter}
+            src={shelterDetail.shelterImage}
             sx={{ width: "500px", height: "500px", borderRadius: "10px" }}
           />
           <div className="pet-desc" style={{ width: "600px" }}>
@@ -149,7 +159,7 @@ const ShelterDetail = () => {
                 fontWeight={700}
                 fontFamily={fontFamily.msr}
               >
-                {shelterDetail.name}
+                {shelterDetail.shelterName}
               </Typography>
             </div>
             <div
@@ -161,10 +171,13 @@ const ShelterDetail = () => {
                 color="initial"
                 fontFamily={fontFamily.msr}
               >
-                {shelterDetail.desc}
+                {shelterDetail.description}
               </Typography>
             </div>
-            <PetDetailTag title={"Location"} value={shelterDetail.location} />
+            <PetDetailTag
+              title={"Location"}
+              value={shelterDetail.shelterLocation}
+            />
             <CustomDivider />
             <PetDetailTag
               title={"Contact number"}
@@ -175,7 +188,7 @@ const ShelterDetail = () => {
             <CustomDivider />
             <PetDetailTag
               title={"Opening / Closing"}
-              value={shelterDetail.ocTime}
+              value={shelterDetail.openingClosing}
             />
             <CustomDivider />
             <PetDetailTag title={"Capacity"} value={shelterDetail.capacity} />
