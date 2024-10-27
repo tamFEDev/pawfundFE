@@ -52,7 +52,11 @@ const MyPetCard = ({
   };
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
-      <CardMedia component={"img"} src={img} sx={{ width: "100%" }} />
+      <CardMedia
+        component={"img"}
+        src={img}
+        sx={{ width: "100%", borderRadius: "10px", height: "250px" }}
+      />
       <div className="card-content" style={{ marginTop: "10px" }}>
         <CustomChip
           title={isApproved ? "Approved" : "Awaiting shelter"}

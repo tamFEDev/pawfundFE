@@ -192,8 +192,8 @@ const ShelterDetail = () => {
             />
             <CustomDivider />
             <PetDetailTag title={"Capacity"} value={shelterDetail.capacity} />
-            <CustomDivider />
-            <div
+
+            {/* <div
               className="pet-gender"
               style={{
                 display: "flex",
@@ -228,7 +228,7 @@ const ShelterDetail = () => {
                   fontWeight={600}
                 />
               </div>
-            </div>
+            </div> */}
             <Button
               sx={{
                 bgcolor: "#003459",

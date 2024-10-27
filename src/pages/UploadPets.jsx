@@ -89,6 +89,7 @@ const UploadPets = () => {
       size: form.petSize,
       contactPhoneNumber: form.contactNumber,
       contactEmail: form.email,
+      created: new Date().toISOString(),
       petCategoryId: form.petType.toLowerCase() === "dog" ? 1 : 2, // Setting category ID as per pet type
       isAdopted: false,
       isApproved: false,
