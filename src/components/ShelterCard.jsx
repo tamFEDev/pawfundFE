@@ -1,6 +1,6 @@
 import { Button, Card, CardMedia, Typography } from "@mui/material";
 import React from "react";
-import { fontFamily } from "../constants";
+import { fontFamily, imgURL } from "../constants";
 import CustomChip from "./CustomChip";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -13,10 +13,15 @@ const ShelterCard = ({
   cat,
   dog,
   img,
+  id,
+  capacity,
 }) => {
   const loc = useLocation();
   const currentPath = loc.pathname;
   const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate(`/shelters/${id}`);
+  };
   return (
     <Card sx={{ p: "15px", width: "425px", borderRadius: "20px" }}>
       <CardMedia
@@ -25,30 +30,6 @@ const ShelterCard = ({
         sx={{ width: "100%", height: "233px", borderRadius: "10px" }}
       />
       <div className="card-content" style={{ marginTop: "15px" }}>
-        <div
-          className="chip-container"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: "10px",
-          }}
-        >
-          <CustomChip
-            title={`${dog} dogs`}
-            color={"#FFB775"}
-            bgColor={"rgb(255,183,117,0.1)"}
-            fontSize={14}
-            fontWeight={600}
-          />
-          <CustomChip
-            title={`${cat} cats`}
-            color={"#9E896A"}
-            bgColor={"rgb(158,137,106,0.1)"}
-            fontSize={14}
-            fontWeight={600}
-          />
-        </div>
         <Typography
           variant="body1"
           color="initial"
@@ -190,7 +171,7 @@ const ShelterCard = ({
           marginTop: "24px",
           fontFamily: fontFamily.msr,
         }}
-        onClick={() => navigate("/shelters/id")}
+        onClick={() => handleNavigate()}
       >
         {currentPath === "/shelters" ? "Take a visit" : "Donate us!"}
       </Button>

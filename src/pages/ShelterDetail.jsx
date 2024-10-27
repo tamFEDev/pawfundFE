@@ -21,19 +21,7 @@ import PetList from "../components/PetList";
 import AdoptionBanner from "../components/AdoptionBanner";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
-
-const shelterDetail = {
-  name: "Happy Paws Shelter",
-  location: "123 Main Street, Anytown USA",
-  desc: "We are a shelter dedicated to finding loving homes for abandoned pets. Our team of volunteer animals handlers and volunteers work tirelessly to ensure that every pet finds a forever home.",
-  image: imgURL.shelter,
-  contactNumber: "(+84) 987837645",
-  email: "happypaws@example.com",
-  capacity: 50,
-  ocTime: "09:00 - 17:00",
-  dog: 20,
-  cat: 30,
-};
+import { useLocation, useParams } from "react-router-dom";
 
 const donationValue = [
   { name: "10.000đ", value: 10000 },
@@ -63,6 +51,15 @@ const ShelterDetail = () => {
     note: "",
   });
   const [customDonation, setCustomDonation] = useState(null);
+  const location = useLocation();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+      } catch (err) {}
+    };
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -115,6 +112,8 @@ const ShelterDetail = () => {
     console.log(form);
     handleClose();
   };
+
+  const shelterDetail = location.state || {};
 
   return (
     <div>
@@ -169,7 +168,7 @@ const ShelterDetail = () => {
             <CustomDivider />
             <PetDetailTag
               title={"Contact number"}
-              value={shelterDetail.contactNumber}
+              value={shelterDetail.contact}
             />
             <CustomDivider />
             <PetDetailTag title={"Email"} value={shelterDetail.email} />

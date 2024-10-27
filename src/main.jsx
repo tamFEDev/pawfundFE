@@ -57,7 +57,7 @@ const router = createBrowserRouter([
     element: <PetDetail />,
   },
   {
-    path: "/shelters/id",
+    path: "/shelters/:id",
     element: <ShelterDetail />,
   },
   {

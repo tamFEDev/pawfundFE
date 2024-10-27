@@ -6,6 +6,7 @@ import CustomDivider from "../components/CustomDivider";
 import CustomChip from "../components/CustomChip";
 import AdoptionFormCard from "../components/AdoptionFormCard";
 import MyPetCard from "../components/MyPetCard";
+import ManagePetCard from "../components/MangePetCard";
 
 const data = [
   {
@@ -141,7 +142,7 @@ const ManagePets = () => {
         style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
       >
         {data.map((d, index) => (
-          <MyPetCard
+          <ManagePetCard
             key={index}
             name={d.name}
             isApproved={d.isApproved}
