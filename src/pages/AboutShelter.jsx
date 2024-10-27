@@ -1,9 +1,10 @@
 import { Button, CardMedia, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { fontFamily, imgURL } from "../constants";
 import PetDetailTag from "../components/PetDetailTag";
 import CustomDivider from "../components/CustomDivider";
 import CustomChip from "../components/CustomChip";
+import { useGlobalContext } from "../GlobalProvider";
 
 const shelterDetail = {
   name: "Happy Paws Shelter",
@@ -19,6 +20,10 @@ const shelterDetail = {
 };
 
 const AboutShelter = () => {
+  const { user } = useGlobalContext();
+  useEffect(() => {
+    console.log(user.roleName);
+  }, []);
   return (
     <div
       className=""

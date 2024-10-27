@@ -21,6 +21,7 @@ import AboutShelter from "./pages/AboutShelter.jsx";
 import ShelterPet from "./pages/ShelterPet.jsx";
 import AdoptionForms from "./pages/AdoptionForms.jsx";
 import MyPet from "./pages/MyPet.jsx";
+import ManagePets from "./pages/ManagePets.jsx";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/staff/events",
         element: <AboutShelter />,
+      },
+      {
+        path: "/dashboard/manager/pet-list",
+        element: <ManagePets />,
       },
     ],
   },

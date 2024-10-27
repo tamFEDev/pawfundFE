@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../GlobalProvider";
 
 const Login = () => {
-  const { user, login, loading, setLoading } = useGlobalContext();
+  const { user, login, loading, setLoading, isLogged } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -63,21 +63,21 @@ const Login = () => {
 
   // Use useEffect to redirect based on user role once user data is available
   useEffect(() => {
-    if (user?.roleName && !loading) {
+    if (user?.roleId && isLogged) {
       // Ensure user is defined and loading has stopped
-      switch (user.roleName) {
-        case "Staff":
+      switch (user.roleId) {
+        case 4:
           navigate("/dashboard/staff/about-shelter");
           break;
-        case "User":
+        case 2:
           navigate("/");
           break;
-        default:
-          navigate("/");
+        case 3:
+          navigate("/dashboard/manager/pet-list");
           break;
       }
     }
-  }, [user, loading, navigate]); // Depend on user and loading states
+  }, [user, isLogged, navigate]); // Depend on user and loading states
 
   return (
     <div style={{}}>

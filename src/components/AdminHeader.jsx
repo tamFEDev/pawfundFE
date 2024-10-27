@@ -1,7 +1,7 @@
-import { CardMedia, IconButton, Typography } from "@mui/material";
-import { fontFamily, imgURL } from "../constants";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../GlobalProvider";
+import { CardMedia, IconButton, Typography } from "@mui/material";
+import { fontFamily, imgURL } from "../constants";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const AdminHeader = () => {
@@ -21,34 +21,42 @@ const AdminHeader = () => {
         alignItems: "center",
         padding: "20px 60px",
         backgroundColor: "white",
+        position: "fixed",
+        width: "1420px",
       }}
     >
       <CardMedia component={"img"} src={imgURL.logo} sx={{ width: "179px" }} />
 
-      <Typography
-        variant="body1"
-        color="initial"
-        fontFamily={fontFamily.msr}
-        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-      >
-        {/* Welcome {user.role === "staff" ? "Shelter Staff" : "Admin"},{" "} */}
-        <div
-          className=""
-          style={{ display: "flex", alignItems: "center", gap: 5 }}
+      {user ? (
+        <Typography
+          variant="body1"
+          color="initial"
+          fontFamily={fontFamily.msr}
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
         >
-          <Typography
-            variant="body1"
-            color="initial"
-            fontWeight={600}
-            fontFamily={fontFamily.msr}
+          Welcome {user.roleId === 4 ? "Shelter Staff" : "Manager"},{" "}
+          <div
+            className=""
+            style={{ display: "flex", alignItems: "center", gap: 5 }}
           >
-            {/* {user.email} */}
-          </Typography>
-          <IconButton onClick={() => handleLogout()}>
-            <LogoutIcon fontSize="small" />
-          </IconButton>
-        </div>
-      </Typography>
+            <Typography
+              variant="body1"
+              color="initial"
+              fontWeight={600}
+              fontFamily={fontFamily.msr}
+            >
+              {user.email}
+            </Typography>
+            <IconButton onClick={() => handleLogout()}>
+              <LogoutIcon fontSize="small" />
+            </IconButton>
+          </div>
+        </Typography>
+      ) : (
+        <Typography variant="body1" fontFamily={fontFamily.msr}>
+          Loading...
+        </Typography>
+      )}
     </div>
   );
 };

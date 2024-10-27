@@ -6,8 +6,34 @@ import DonationBanner from "../components/DonationBanner";
 import Footer from "../components/Footer";
 import ShelterList from "../components/ShelterList";
 import PetList from "../components/PetList";
+import { useGlobalContext } from "../GlobalProvider";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Home = () => {
+  const { user, isLogged } = useGlobalContext();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLogged) {
+      navigate("/login");
+    } else {
+      if (user?.roleName && isLogged) {
+        switch (user.roleName) {
+          case "Staff":
+            navigate("/dashboard/staff/about-shelter");
+            break;
+          case "User":
+            navigate("/");
+            break;
+          case "Manager":
+            navigate("/dashboard/manager/pet-list");
+            break;
+        }
+      }
+    }
+    console.log(user.roleId);
+  }, [user, isLogged, navigate]); // Depend on user, isLogged, and navigate
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div className="hero-section">

@@ -68,21 +68,17 @@ const GlobalProvider = ({ children }) => {
     try {
       const response = await axios.post(`${BASE_URL}/api/Auth/Login`, body);
       if (response.status >= 200 && response.status < 300) {
-        const { token, roleName } = response.data;
+        const { token } = response.data;
         localStorage.setItem("accessToken", token);
         setToken(token);
-
-        // Get complete user data including roleName
         const userData = await getLoggedUser(token);
         if (userData) {
-          setUser({ ...userData, roleName }); // Add roleName to user data
-          localStorage.setItem(
-            "user",
-            JSON.stringify({ ...userData, roleName })
-          );
+          setUser(userData);
+          localStorage.setItem("user", JSON.stringify(userData));
           setIsLogged(true);
         }
       }
+      console.log(response.data);
     } catch (err) {
       console.log("Login error: ", err);
     }
