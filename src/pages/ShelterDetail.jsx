@@ -21,8 +21,9 @@ import PetList from "../components/PetList";
 import AdoptionBanner from "../components/AdoptionBanner";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 const donationValue = [
   { name: "10.000đ", value: 10000 },
@@ -53,7 +54,9 @@ const ShelterDetail = () => {
     note: "",
   });
   const [customDonation, setCustomDonation] = useState(null);
-
+  const [URL, setURL] = useState("");
+  const { user } = useGlobalContext();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -75,6 +78,7 @@ const ShelterDetail = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log(user);
   }, []);
 
   useEffect(() => {
@@ -120,9 +124,25 @@ const ShelterDetail = () => {
     return donation !== 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(form);
-    handleClose();
+    try {
+      const body = {
+        transactionAmount: form.donation,
+        isMoneyDonation: true,
+        isResourceDonation: true,
+        userId: user.userId,
+        transactionTypeId: 1,
+      };
+      const res = await axios.post(`${BASE_URL}/api/Transaction/create`, body);
+      if (res.status === 200) {
+        window.location.href = res.data.vnpayUrl;
+      }
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+    // handleClose();
   };
 
   return (

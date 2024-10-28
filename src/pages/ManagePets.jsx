@@ -1,119 +1,40 @@
 import { Button, CardMedia, Typography } from "@mui/material";
-import React from "react";
-import { fontFamily, imgURL } from "../constants";
+import React, { useEffect, useState } from "react";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import PetDetailTag from "../components/PetDetailTag";
 import CustomDivider from "../components/CustomDivider";
 import CustomChip from "../components/CustomChip";
 import AdoptionFormCard from "../components/AdoptionFormCard";
 import MyPetCard from "../components/MyPetCard";
 import ManagePetCard from "../components/MangePetCard";
-
-const data = [
-  {
-    name: "Dogo",
-    isApproved: false,
-    petBreed: "German Shepherd",
-    age: "5 years",
-    uploadDate: "2023-10-20",
-    img: imgURL.dogo,
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-  {
-    name: "Bella",
-    isApproved: true,
-    petBreed: "Golden Retriever",
-    age: "3 years",
-    uploadDate: "2023-09-15",
-    img: imgURL.dogo,
-    shelterName: "Hopeful Tails Shelter",
-    shelterAddress: "789 Maple Ave, Petville",
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-  {
-    name: "Milo",
-    isApproved: false,
-    petBreed: "Bulldog",
-    age: "2 years",
-    uploadDate: "2023-08-30",
-    img: imgURL.dogo,
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-  {
-    name: "Luna",
-    isApproved: true,
-    petBreed: "Siberian Husky",
-    age: "4 years",
-    uploadDate: "2023-07-25",
-    img: imgURL.dogo,
-    shelterName: "Hopeful Tails Shelter",
-    shelterAddress: "789 Maple Ave, Petville",
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-  {
-    name: "Charlie",
-    isApproved: false,
-    petBreed: "Poodle",
-    age: "1 year",
-    uploadDate: "2023-10-10",
-    img: imgURL.dogo,
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-  {
-    name: "Max",
-    isApproved: true,
-    petBreed: "Beagle",
-    age: "6 years",
-    uploadDate: "2023-09-05",
-    img: imgURL.dogo,
-    shelterName: "Hopeful Tails Shelter",
-    shelterAddress: "789 Maple Ave, Petville",
-    petType: "Dog",
-    petColor: "Golden",
-    petSize: "Medium",
-    medicalCondition: "Healthy",
-    petGender: "Male",
-    // petImage: "https://example.com/images/buddy.jpg",
-    aboutPet:
-      "Buddy is a friendly and playful dog who loves to be around people.",
-  },
-];
+import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 const ManagePets = () => {
+  const [data, setData] = useState([]);
+  const { token } = useGlobalContext();
+  useEffect(() => {
+    const fetchAllPets = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Manager/get-all-pet-by-manager`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.status == 200) {
+          setData(res.data.data);
+        }
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchAllPets();
+  }, []);
   return (
     <div
       className=""
@@ -144,20 +65,21 @@ const ManagePets = () => {
         {data.map((d, index) => (
           <ManagePetCard
             key={index}
-            name={d.name}
+            name={d.petName}
             isApproved={d.isApproved}
-            petBreed={d.petBreed}
+            petBreed={d.petType}
             age={d.age}
-            uploadDate={d.uploadDate}
-            img={d.img}
+            uploadDate={d.createdAt}
+            img={d.petImages[0].imageUrl}
             shelterName={d.shelterName}
             shelterAddress={d.shelterAddress}
-            petType={d.petType}
-            petColor={d.petColor}
-            petSize={d.petSize}
+            petType={d.petCategoryId}
+            petColor={d.color}
+            petSize={d.size}
             medicalCondition={d.medicalCondition}
-            petGender={d.petGender}
-            aboutPet={d.aboutPet}
+            petGender={d.gender}
+            aboutPet={d.description}
+            userId={d.userId}
           />
         ))}
       </div>

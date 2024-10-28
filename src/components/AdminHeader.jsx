@@ -23,6 +23,7 @@ const AdminHeader = () => {
         backgroundColor: "white",
         position: "fixed",
         width: "1420px",
+        zIndex: 2,
       }}
     >
       <CardMedia component={"img"} src={imgURL.logo} sx={{ width: "179px" }} />

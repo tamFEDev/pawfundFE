@@ -8,10 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { fontFamily } from "../constants";
+import React, { useEffect, useState } from "react";
+import { BASE_URL, fontFamily } from "../constants";
 import { useNavigate } from "react-router-dom";
 import CustomChip from "./CustomChip";
+import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -41,15 +42,38 @@ const ManagePetCard = ({
   medicalCondition,
   petGender,
   aboutPet,
+  userId,
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState({});
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    const fetchUserByID = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Admin/GetUserById?id=${userId}`
+        );
+        if (res.status === 200) {
+          setUser(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchUserByID();
+  }, [userId]);
+
+  // Add this useEffect to log the user whenever it updates
+  useEffect(() => {
+    console.log("Updated user:", user);
+  }, [user]);
 
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
@@ -254,7 +278,7 @@ const ManagePetCard = ({
                 placeholder="Enter your full name"
                 name="fullName"
                 label="Full name"
-                //   value={form.fullName}
+                value={user.fullname}
                 //   onChange={(e) => handleChangeForm(e)}
                 fullWidth
                 sx={{
@@ -273,7 +297,7 @@ const ManagePetCard = ({
                 label="Address"
                 placeholder="Enter your address"
                 name="address"
-                //   value={form.address}
+                value={user.address}
                 //   onChange={(e) => handleChangeForm(e)}
                 fullWidth
                 sx={{
@@ -302,7 +326,7 @@ const ManagePetCard = ({
                 placeholder="Enter your contact number"
                 name="contactNumber"
                 label="Contact number"
-                //   value={form.contactNumber}
+                value={user.phoneNumber}
                 //   onChange={(e) => handleChangeForm(e)}
                 fullWidth
                 sx={{
@@ -322,7 +346,7 @@ const ManagePetCard = ({
                 label="Email"
                 placeholder="Enter your email address"
                 name="email"
-                //   value={form.email}
+                value={user.email}
                 //   onChange={(e) => handleChangeForm(e)}
                 fullWidth
                 sx={{

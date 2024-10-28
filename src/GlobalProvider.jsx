@@ -27,7 +27,7 @@ const GlobalProvider = ({ children }) => {
       }
     };
     onRefresh();
-  }, [token, user]);
+  }, []);
 
   const loadUserAfterRefresh = async () => {
     try {
@@ -58,6 +58,7 @@ const GlobalProvider = ({ children }) => {
       if (response.status >= 200 && response.status < 300) {
         return response.data;
       }
+      console.log("user info after refresh: ", response.data);
     } catch (err) {
       console.log("Error fetching user: ", err);
     }
