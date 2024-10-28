@@ -61,8 +61,8 @@ const AdminSideBar = () => {
         backgroundColor: "white",
         display: "inline-block",
         height: "100vh",
-        padding: "30px 0",
-        width: "260px",
+        padding: "40px 20px",
+        width: user.roleId === 4 ? "180px" : "160px",
         marginTop: "80px",
         position: "fixed",
       }}
@@ -72,7 +72,6 @@ const AdminSideBar = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
         }}
       >
         {pages.map((p, index) => (
@@ -91,7 +90,7 @@ const AdminSideBar = () => {
                 fontWeight={600}
                 fontFamily={fontFamily.msr}
                 sx={{ display: "flex", gap: 2, width: "200px" }}
-                textAlign={"left"}
+                // textAlign={"center"}
               >
                 {p.icon} {p.name}
               </Typography>

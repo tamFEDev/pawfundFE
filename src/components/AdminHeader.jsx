@@ -19,10 +19,10 @@ const AdminHeader = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "20px 60px",
+        padding: "20px 30px",
         backgroundColor: "white",
         position: "fixed",
-        width: "1420px",
+        width: "1480px",
         zIndex: 2,
       }}
     >

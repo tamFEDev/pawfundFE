@@ -46,12 +46,23 @@ const ManagePetCard = ({
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [openShelters, setOpenShelters] = useState(false);
   const [user, setUser] = useState({});
+
   const handleOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOpenShelters = () => {
+    setOpenShelters(true);
+  };
+
+  const handleCloseShelter = () => {
+    setOpenShelters(true);
   };
 
   useEffect(() => {
@@ -75,9 +86,22 @@ const ManagePetCard = ({
     console.log("Updated user:", user);
   }, [user]);
 
+  const formatReadableDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
-      <CardMedia component={"img"} src={img} sx={{ width: "100%" }} />
+      <CardMedia
+        component={"img"}
+        src={img}
+        sx={{ width: "100%", height: "270px", borderRadius: "10px" }}
+      />
       <div className="card-content" style={{ marginTop: "10px" }}>
         <CustomChip
           title={isApproved ? "Approved" : "Awaiting shelter"}
@@ -172,7 +196,7 @@ const ManagePetCard = ({
             fontSize={12}
             fontWeight={600}
           >
-            {uploadDate}
+            {formatReadableDate(uploadDate)}
           </Typography>
         </Typography>
       </div>
@@ -217,15 +241,37 @@ const ManagePetCard = ({
                 // gap: 10,
               }}
             >
-              <CustomChip
-                title={isApproved ? "Approved" : "Awaiting shelter"}
-                color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
-                bgColor={
-                  isApproved ? "rgb(22, 163, 74, 0.1)" : "rgb(217, 119, 6, 0.1)"
-                }
-                fontSize={12}
-                fontWeight={600}
-              />
+              <div className="" style={{ display: "flex", gap: 10 }}>
+                <CustomChip
+                  title={isApproved ? "Approved" : "Awaiting shelter"}
+                  color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
+                  bgColor={
+                    isApproved
+                      ? "rgb(22, 163, 74, 0.1)"
+                      : "rgb(217, 119, 6, 0.1)"
+                  }
+                  fontSize={12}
+                  fontWeight={600}
+                />
+                <Typography
+                  variant="body1"
+                  color="#667479"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  fontFamily={fontFamily.msr}
+                  fontSize={13}
+                >
+                  Uploaded Date:{" "}
+                  <Typography
+                    variant="body1"
+                    color="#667479"
+                    fontFamily={fontFamily.msr}
+                    fontWeight={600}
+                    fontSize={13}
+                  >
+                    {formatReadableDate(uploadDate)}
+                  </Typography>
+                </Typography>
+              </div>
               <Typography
                 variant="body1"
                 color="initial"
@@ -249,7 +295,7 @@ const ManagePetCard = ({
               >
                 {isApproved
                   ? `Staff will be notified about ${name}`
-                  : "Please check this form"}
+                  : "Please review this form to ensure accurate shelter placement."}
               </Typography>
             </div>
             <Avatar src={img} sx={{ width: "80px", height: "80px" }} />
@@ -567,7 +613,7 @@ const ManagePetCard = ({
                 color: "white",
               }}
               //   disabled={!isFormComplete()}
-              //   onClick={() => handleContinueForm()}
+              onClick={() => handleContinueForm()}
             >
               Move to Shelter
             </Button>

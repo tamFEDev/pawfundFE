@@ -24,9 +24,6 @@ const pages = [
 const Header = ({}) => {
   const navigate = useNavigate();
   const { user } = useGlobalContext();
-  // useEffect(() => {
-  //   console.log(token);
-  // });
   return (
     <div
       style={{

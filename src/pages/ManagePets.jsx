@@ -39,13 +39,11 @@ const ManagePets = () => {
     <div
       className=""
       style={{
-        marginTop: "20px",
-        marginLeft: "20px",
-        padding: "30px 30px",
+        padding: "20px 20px",
         // display: "inline-block",
         backgroundColor: "white",
         borderRadius: "10px",
-        width: "1000px",
+        width: "1260px",
       }}
     >
       <Typography
@@ -60,7 +58,7 @@ const ManagePets = () => {
       <CustomDivider padding={"20px 0"} />
       <div
         className="card-container"
-        style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
+        style={{ display: "flex", flexWrap: "wrap", gap: 20 }}
       >
         {data.map((d, index) => (
           <ManagePetCard
