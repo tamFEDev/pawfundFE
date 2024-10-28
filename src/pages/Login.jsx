@@ -8,6 +8,8 @@ import {
   Button,
   Link,
   Grid2,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 import Visibility from "@mui/icons-material/Visibility";
@@ -25,6 +27,21 @@ const Login = () => {
     password: "",
     remember: false,
   });
+
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const [alert, setAlert] = useState(false);
+
+  const handleClose = () => {
+    setAlert(false);
+  };
+
+  const handleOpen = () => {
+    setAlert(true);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,40 +64,71 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setLoading(true); // Start loading when login is initiated
+    setLoading(true);
     try {
       const body = {
         email: form.email,
         password: form.password,
       };
-      await login(body);
+      const user = await login(body);
+
+      if (user) {
+        setInfo({
+          isError: false,
+          message: "Login successful! Please wait...",
+        });
+      } else {
+        setInfo({
+          isError: true,
+          message: "Invalid email or password! Please try again",
+        });
+      }
+      handleOpen();
     } catch (err) {
       console.log("Login failed: ", err);
     } finally {
-      setLoading(false); // Stop loading after login completes
+      setLoading(false);
     }
   };
 
   // Use useEffect to redirect based on user role once user data is available
   useEffect(() => {
     if (user?.roleId && isLogged) {
-      // Ensure user is defined and loading has stopped
-      switch (user.roleId) {
-        case 4:
-          navigate("/dashboard/staff/about-shelter");
-          break;
-        case 2:
-          navigate("/");
-          break;
-        case 3:
-          navigate("/dashboard/manager/pet-list");
-          break;
-      }
+      const timer = setTimeout(() => {
+        switch (user.roleId) {
+          case 4:
+            navigate("/dashboard/staff/about-shelter");
+            break;
+          case 2:
+            navigate("/");
+            break;
+          case 3:
+            navigate("/dashboard/manager/pet-list");
+            break;
+        }
+      }, 1000); // Delay the navigation by 2 seconds
+
+      return () => clearTimeout(timer); // Clear timeout on component unmount
     }
-  }, [user, isLogged, navigate]); // Depend on user and loading states
+  }, [user, isLogged, navigate]);
 
   return (
     <div style={{}}>
+      <Snackbar
+        open={alert} // Use 'alert' state to control visibility
+        autoHideDuration={1000} // Automatically closes after 3 seconds
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={info.isError ? "error" : "success"} // Corrected spelling of "success"
+          sx={{ width: "100%" }}
+        >
+          {info.message}
+        </Alert>
+      </Snackbar>
+
       <div
         className="login-body"
         style={{

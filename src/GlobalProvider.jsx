@@ -77,12 +77,14 @@ const GlobalProvider = ({ children }) => {
           setUser(userData);
           localStorage.setItem("user", JSON.stringify(userData));
           setIsLogged(true);
+          return userData;
         }
       }
       console.log(response.data);
     } catch (err) {
       console.log("Login error: ", err);
     }
+    return null;
   };
 
   const logout = () => {

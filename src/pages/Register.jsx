@@ -9,6 +9,8 @@ import {
   Button,
   Link,
   Grid2,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -26,6 +28,10 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const [error, setError] = useState("");
+
+  const [alert, setAlert] = useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -40,6 +46,14 @@ const Register = () => {
       ...form,
       [name]: value,
     });
+  };
+
+  const handleClose = () => {
+    setAlert(false);
+  };
+
+  const handleOpen = () => {
+    setAlert(true);
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -65,8 +79,12 @@ const Register = () => {
     };
     try {
       const res = await axios.post(`${BASE_URL}/api/Auth/Register`, body);
-      console.log("Registration successful:", res.data);
-      navigate("/login");
+      if (res.status == 200) {
+        handleOpen();
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -74,6 +92,16 @@ const Register = () => {
 
   return (
     <div style={{}}>
+      <Snackbar
+        open={alert} // Use 'alert' state to control visibility
+        autoHideDuration={1000} // Automatically closes after 3 seconds
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          Registration successful!
+        </Alert>
+      </Snackbar>
       <div
         className="login-body"
         style={{
