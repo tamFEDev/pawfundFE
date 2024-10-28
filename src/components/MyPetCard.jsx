@@ -44,11 +44,22 @@ const MyPetCard = ({
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
   const handleOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const formatReadableDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
@@ -151,7 +162,7 @@ const MyPetCard = ({
             fontSize={12}
             fontWeight={600}
           >
-            {uploadDate}
+            {formatReadableDate(uploadDate)}
           </Typography>
         </Typography>
       </div>

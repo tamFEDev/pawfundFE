@@ -80,7 +80,7 @@ const UploadPets = () => {
     const body = {
       petName: form.petName,
       petType: form.petBreed,
-      age: parseInt(form.petAge), // Convert age to an integer
+      age: form.petAge,
       gender: form.gender,
       address: form.address,
       medicalCondition: form.petMedical,
