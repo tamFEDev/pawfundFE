@@ -13,6 +13,7 @@ import { BASE_URL, fontFamily } from "../constants";
 import { useNavigate } from "react-router-dom";
 import CustomChip from "./CustomChip";
 import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 const style = {
   position: "absolute",
@@ -43,11 +44,14 @@ const ManagePetCard = ({
   petGender,
   aboutPet,
   userId,
+  petId,
+  onDeleted,
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openShelters, setOpenShelters] = useState(false);
   const [user, setUser] = useState({});
+  const { token, setLoading, loading } = useGlobalContext();
 
   const handleOpen = () => {
     setOpen(true);
@@ -63,6 +67,27 @@ const ManagePetCard = ({
 
   const handleCloseShelter = () => {
     setOpenShelters(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      //todo: add delete function
+      const res = await axios.delete(
+        `${BASE_URL}/api/Manager/delete-pet-by-manager/${petId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) {
+        onDeleted();
+        setOpen(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -582,41 +607,57 @@ const ManagePetCard = ({
             className="button"
             style={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               marginTop: "20px",
-              gap: 15,
+              // gap: 15,
             }}
           >
             <Button
               sx={{
                 textTransform: "none",
-                fontWeight: 600,
-                color: "#103559",
-                fontSize: "16px",
-                borderRadius: "10px",
-                border: "1px solid #103559",
-                fontFamily: fontFamily.msr,
-                p: "12px 20px",
-              }}
-              onClick={() => handleClose()}
-            >
-              Cancel
-            </Button>
-            <Button
-              sx={{
-                textTransform: "none",
-                bgcolor: "#103559",
+                bgcolor: "#EF4444",
                 fontSize: "16px",
                 borderRadius: "10px",
                 fontFamily: fontFamily.msr,
                 p: "12px 20px",
                 color: "white",
               }}
-              //   disabled={!isFormComplete()}
-              onClick={() => handleContinueForm()}
+              onClick={() => handleDelete()}
             >
-              Move to Shelter
+              Delete
             </Button>
+            <div className="" style={{ display: "flex", gap: 15 }}>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  color: "#103559",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  border: "1px solid #103559",
+                  fontFamily: fontFamily.msr,
+                  p: "12px 20px",
+                }}
+                onClick={() => handleClose()}
+              >
+                Cancel
+              </Button>
+              <Button
+                sx={{
+                  textTransform: "none",
+                  bgcolor: "#103559",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  fontFamily: fontFamily.msr,
+                  p: "12px 20px",
+                  color: "white",
+                }}
+                //   disabled={!isFormComplete()}
+                // onClick={() => handleContinueForm()}
+              >
+                Move to Shelter
+              </Button>
+            </div>
           </div>
         </Box>
       </Modal>

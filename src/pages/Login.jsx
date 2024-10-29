@@ -70,9 +70,14 @@ const Login = () => {
         email: form.email,
         password: form.password,
       };
-      const user = await login(body);
+      const result = await login(body);
 
-      if (user) {
+      if (result && result.error) {
+        setInfo({
+          isError: true,
+          message: result.error,
+        });
+      } else if (result) {
         setInfo({
           isError: false,
           message: "Login successful! Please wait...",
@@ -116,7 +121,7 @@ const Login = () => {
     <div style={{}}>
       <Snackbar
         open={alert} // Use 'alert' state to control visibility
-        autoHideDuration={1000} // Automatically closes after 3 seconds
+        autoHideDuration={info.isError ? 2000 : 1000} // Automatically closes after 3 seconds
         onClose={handleClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >

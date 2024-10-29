@@ -17,7 +17,7 @@ const DashboardLayout = () => {
           style={{
             marginLeft: "210px",
             marginTop: "100px",
-            marginBottom: "20px",
+            marginBottom: "30px",
           }}
         >
           <Outlet />

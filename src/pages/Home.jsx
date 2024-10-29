@@ -17,15 +17,15 @@ const Home = () => {
     if (!isLogged) {
       navigate("/login");
     } else {
-      if (user?.roleName && isLogged) {
-        switch (user.roleName) {
-          case "Staff":
+      if (user?.roleId && isLogged) {
+        switch (user.roleId) {
+          case 4:
             navigate("/dashboard/staff/about-shelter");
             break;
-          case "User":
+          case 2:
             navigate("/");
             break;
-          case "Manager":
+          case 3:
             navigate("/dashboard/manager/pet-list");
             break;
         }

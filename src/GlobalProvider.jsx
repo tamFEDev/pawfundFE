@@ -83,6 +83,9 @@ const GlobalProvider = ({ children }) => {
       console.log(response.data);
     } catch (err) {
       console.log("Login error: ", err);
+      if (err.code === "ERR_NETWORK") {
+        return { error: "Network Error: Unable to connect to the server" };
+      }
     }
     return null;
   };

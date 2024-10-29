@@ -13,28 +13,31 @@ import { useGlobalContext } from "../GlobalProvider";
 const ManagePets = () => {
   const [data, setData] = useState([]);
   const { token } = useGlobalContext();
-  useEffect(() => {
-    const fetchAllPets = async () => {
-      try {
-        const res = await axios.get(
-          `${BASE_URL}/api/Manager/get-all-pet-by-manager`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (res.status == 200) {
-          setData(res.data.data);
+
+  const fetchAllPets = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/Manager/get-all-pet-by-manager`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-        console.log(data);
-      } catch (err) {
-        console.log(err);
+      );
+      if (res.status == 200) {
+        setData(res.data.data);
       }
-    };
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
     fetchAllPets();
   }, []);
+
   return (
     <div
       className=""
@@ -78,6 +81,8 @@ const ManagePets = () => {
             petGender={d.gender}
             aboutPet={d.description}
             userId={d.userId}
+            petId={d.petId}
+            onDeleted={fetchAllPets}
           />
         ))}
       </div>
