@@ -22,27 +22,48 @@ import ShelterPet from "./pages/ShelterPet.jsx";
 import AdoptionForms from "./pages/AdoptionForms.jsx";
 import MyPet from "./pages/MyPet.jsx";
 import ManagePets from "./pages/ManagePets.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/home",
-    element: <Home />,
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/donation",
-    element: <Donation />,
+    element: (
+      <ProtectedRoute>
+        <Donation />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/adoption",
-    element: <Adoption />,
+    element: (
+      <ProtectedRoute>
+        <Adoption />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/shelters",
-    element: <Shelters />,
+    element: (
+      <ProtectedRoute>
+        <Shelters />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",
@@ -54,15 +75,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/adoption/id",
-    element: <PetDetail />,
+    element: (
+      <ProtectedRoute>
+        <PetDetail />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/shelters/:id",
-    element: <ShelterDetail />,
+    element: (
+      <ProtectedRoute>
+        <ShelterDetail />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/account",
-    element: <AccountLayout />,
+    element: (
+      <ProtectedRoute>
+        <AccountLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/account/profile",
@@ -88,7 +121,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/dashboard/staff/about-shelter",

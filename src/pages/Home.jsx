@@ -13,6 +13,7 @@ import { useEffect } from "react";
 const Home = () => {
   const { user, isLogged } = useGlobalContext();
   const navigate = useNavigate();
+  // const userInfo = localStorage.getItem('user')
   useEffect(() => {
     if (!isLogged) {
       navigate("/login");
