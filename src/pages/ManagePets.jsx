@@ -9,6 +9,7 @@ import MyPetCard from "../components/MyPetCard";
 import ManagePetCard from "../components/MangePetCard";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
+import PetsIcon from "@mui/icons-material/Pets";
 
 const ManagePets = () => {
   const [data, setData] = useState([]);
@@ -63,28 +64,82 @@ const ManagePets = () => {
         className="card-container"
         style={{ display: "flex", flexWrap: "wrap", gap: 20 }}
       >
-        {data.map((d, index) => (
-          <ManagePetCard
-            key={index}
-            name={d.petName}
-            isApproved={d.isApproved}
-            petBreed={d.petType}
-            age={d.age}
-            uploadDate={d.createdAt}
-            img={d.petImages[0].imageUrl}
-            shelterName={d.shelterName}
-            shelterAddress={d.shelterAddress}
-            petType={d.petCategoryId}
-            petColor={d.color}
-            petSize={d.size}
-            medicalCondition={d.medicalCondition}
-            petGender={d.gender}
-            aboutPet={d.description}
-            userId={d.userId}
-            petId={d.petId}
-            onDeleted={fetchAllPets}
-          />
-        ))}
+        {data.length == 0 ? (
+          <Typography
+            variant="body1"
+            color="initial"
+            fontFamily={fontFamily.msr}
+            fontSize={30}
+            fontWeight={600}
+            textAlign={"center"}
+            sx={{
+              p: "188px 300px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              className=""
+              style={{ display: "flex", gap: 10, alignItems: "center" }}
+            >
+              <PetsIcon />
+              No pets found
+            </div>
+            <Typography
+              variant="body1"
+              color="#667479"
+              fontSize={20}
+              fontWeight={600}
+              fontFamily={fontFamily.msr}
+              sx={{
+                marginTop: "10px",
+                display: "inline-block",
+                width: "500px",
+              }}
+            >
+              Please wait for users to upload their pets
+            </Typography>
+            <Typography
+              variant="body1"
+              color="#667479"
+              fontSize={16}
+              fontFamily={fontFamily.msr}
+              sx={{
+                marginTop: "5px",
+                display: "inline-block",
+                width: "550px",
+              }}
+            >
+              Don&apos;t worry, this happens when our system has no pets to
+              fetch
+            </Typography>
+          </Typography>
+        ) : (
+          data.map((d, index) => (
+            <ManagePetCard
+              key={index}
+              name={d.petName}
+              isApproved={d.isApproved}
+              petBreed={d.petType}
+              age={d.age}
+              uploadDate={d.createdAt}
+              img={d.petImages[0].imageUrl}
+              shelterName={d.shelterName}
+              shelterAddress={d.shelterAddress}
+              petType={d.petCategoryId}
+              petColor={d.color}
+              petSize={d.size}
+              medicalCondition={d.medicalCondition}
+              petGender={d.gender}
+              aboutPet={d.description}
+              userId={d.userId}
+              petId={d.petId}
+              onDeleted={fetchAllPets}
+            />
+          ))
+        )}
       </div>
     </div>
   );

@@ -28,6 +28,18 @@ const style = {
   //   overflowY: "scroll",
 };
 
+const shelterModal = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 550,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "20px",
+};
+
 const ManagePetCard = ({
   name,
   isApproved,
@@ -52,8 +64,18 @@ const ManagePetCard = ({
   const [openShelters, setOpenShelters] = useState(false);
   const [user, setUser] = useState({});
   const { token, setLoading, loading } = useGlobalContext();
+  const [shelters, setShelters] = useState([]);
+  const [selectedShelter, setSelectedShelter] = useState(null);
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/Shelter/GetAllShelters`);
+      if (res.status == 200) {
+        setShelters(res.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
     setOpen(true);
   };
 
@@ -61,12 +83,21 @@ const ManagePetCard = ({
     setOpen(false);
   };
 
+  const handlePickShelter = () => {
+    handleCloseShelter();
+  };
+
+  const handleCancelPick = () => {
+    handleCloseShelter();
+    setSelectedShelter(null);
+  };
+
   const handleOpenShelters = () => {
     setOpenShelters(true);
   };
 
   const handleCloseShelter = () => {
-    setOpenShelters(true);
+    setOpenShelters(false);
   };
 
   const handleDelete = async () => {
@@ -118,6 +149,10 @@ const ManagePetCard = ({
       month: "long",
       day: "numeric",
     });
+  };
+
+  const handleSelectShelter = (id) => {
+    setSelectedShelter(id);
   };
 
   return (
@@ -653,11 +688,176 @@ const ManagePetCard = ({
                   color: "white",
                 }}
                 //   disabled={!isFormComplete()}
-                // onClick={() => handleContinueForm()}
+                onClick={() => handleOpenShelters()}
               >
                 Move to Shelter
               </Button>
             </div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={openShelters}
+        onClose={handleCloseShelter}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={shelterModal}>
+          <div
+            className=""
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="initial"
+              fontSize={24}
+              fontWeight={600}
+              fontFamily={fontFamily.msr}
+            >
+              Pick a shelter for {name}
+            </Typography>
+
+            <Typography
+              variant="body1"
+              fontFamily={fontFamily.msr}
+              color="#667479"
+              fontSize={14}
+            >
+              {isApproved
+                ? `Staff will be notified about ${name}`
+                : "Please review this form to ensure accurate shelter placement."}
+            </Typography>
+          </div>
+          <div
+            className=""
+            style={{
+              overflowY: "scroll",
+              height: "450px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              marginTop: "20px",
+              padding: "10px 10px",
+              cursor: "pointer",
+            }}
+          >
+            {shelters.map((s, index) => (
+              <div
+                className=""
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "10px",
+                  border:
+                    selectedShelter === s.shelterId && "1px solid #103559",
+                  borderRadius: "10px",
+                }}
+                onClick={() => handleSelectShelter(s.shelterId)}
+              >
+                <CardMedia
+                  component={"img"}
+                  src={s.shelterImage}
+                  sx={{ width: "100px", height: "100px", borderRadius: "10px" }}
+                />
+                <div className="">
+                  <Typography
+                    variant="body1"
+                    color="initial"
+                    key={index}
+                    fontFamily={fontFamily.msr}
+                    fontWeight={600}
+                    fontSize={18}
+                  >
+                    {s.shelterName}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="#667479"
+                    fontSize={16}
+                    fontFamily={fontFamily.msr}
+                    sx={{ mt: "3px" }}
+                  >
+                    {s.shelterLocation}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="initial"
+                    fontFamily={fontFamily.msr}
+                    fontSize={16}
+                    sx={{ mt: "8px", display: "flex", alignItems: "center" }}
+                  >
+                    Capacity: 50/{s.capacity}
+                    <div
+                      className="progress-bar"
+                      style={{
+                        width: "100px",
+                        height: "5px",
+                        backgroundColor: "#e5e7eb",
+                        marginLeft: "15px",
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <div
+                        className="progress"
+                        style={{
+                          width: "20%",
+                          backgroundColor: "#103559",
+                          height: "5px",
+                          borderRadius: "10px",
+                        }}
+                      ></div>
+                    </div>
+                  </Typography>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            className=""
+            style={{
+              display: "flex",
+              gap: 15,
+              marginTop: "20px",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                color: "#103559",
+                fontSize: "16px",
+                borderRadius: "10px",
+                border: "1px solid #103559",
+                fontFamily: fontFamily.msr,
+                p: "12px 20px",
+              }}
+              onClick={() => handleCancelPick()}
+            >
+              Cancel
+            </Button>
+            <Button
+              sx={{
+                textTransform: "none",
+                bgcolor: selectedShelter ? "#103559" : "",
+                fontSize: "16px",
+                borderRadius: "10px",
+                fontFamily: fontFamily.msr,
+                p: "12px 20px",
+                color: "white",
+              }}
+              disabled={selectedShelter === null}
+              // onClick={() => handleOpenShelters()}
+            >
+              Confirm
+            </Button>
           </div>
         </Box>
       </Modal>
