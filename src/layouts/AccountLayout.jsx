@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { Button, Card, CardMedia, Link, List, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Card,
+  CardMedia,
+  Link,
+  List,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import { fontFamily } from "../constants";
 import CustomDivider from "../components/CustomDivider";
 import { useGlobalContext } from "../GlobalProvider";
@@ -26,15 +35,50 @@ const tabs = [
 ];
 
 const AccountLayout = () => {
-  const { logout, loading } = useGlobalContext();
+  const { logout, loading, user } = useGlobalContext();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const handleNavigate = (name, url) => {
+    if (name === "Upload Pets") {
+      if (!user.address && !user.phoneNumber) {
+        navigate("/account/profile");
+        handleOpen();
+        return;
+      }
+    }
+    navigate(url);
+  };
+
   return (
     <div>
+      <Snackbar
+        open={open} // Use 'alert' state to control visibility
+        autoHideDuration={2000} // Automatically closes after 3 seconds
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="error" // Corrected spelling of "success"
+          sx={{ width: "100%" }}
+        >
+          Please update all fields in My Profile tab
+        </Alert>
+      </Snackbar>
       <Header />
       <div
         className="body"
@@ -49,7 +93,11 @@ const AccountLayout = () => {
         <Card sx={{ width: "280px", p: "30px 30px", height: "350px" }}>
           <div className="">
             {tabs.map((t, index) => (
-              <Link href={t.url} underline="none" key={index}>
+              <div
+                onClick={() => handleNavigate(t.name, t.url)}
+                key={index}
+                style={{ cursor: "pointer" }}
+              >
                 <Typography
                   variant="body1"
                   color="initial"
@@ -60,7 +108,7 @@ const AccountLayout = () => {
                   {t.name}
                 </Typography>
                 <CustomDivider padding={"20px 0"} />
-              </Link>
+              </div>
             ))}
             <Button
               onClick={() => handleLogout()}

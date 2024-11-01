@@ -15,7 +15,7 @@ const PetDetailTag = ({ title, value }) => {
       <Typography
         variant="body1"
         color="initial"
-        style={{ width: "150px", paddingRight: "80px" }}
+        style={{ width: "150px", paddingRight: "50px" }}
         fontFamily={fontFamily.msr}
       >
         {title}

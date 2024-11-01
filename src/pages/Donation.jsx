@@ -4,8 +4,12 @@ import { fontFamily } from "../constants";
 import Footer from "../components/Footer";
 import ShelterList from "../components/ShelterList";
 import DonationBanner from "../components/DonationBanner";
+import { useEffect } from "react";
 
 const Donation = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  });
   return (
     <div>
       <Header />

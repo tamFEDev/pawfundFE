@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardMedia,
+  IconButton,
   Modal,
   TextField,
   Typography,
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import CustomChip from "./CustomChip";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
+import CloseIcon from "@mui/icons-material/Close";
 
 const style = {
   position: "absolute",
@@ -57,7 +59,7 @@ const ManagePetCard = ({
   aboutPet,
   userId,
   petId,
-  onDeleted,
+  onRefresh,
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -66,6 +68,11 @@ const ManagePetCard = ({
   const { token, setLoading, loading } = useGlobalContext();
   const [shelters, setShelters] = useState([]);
   const [selectedShelter, setSelectedShelter] = useState(null);
+  const [confirmedShelter, setConfirmedShelter] = useState({
+    shelterId: null,
+    shelterName: null,
+    shelterLocation: null,
+  });
 
   const handleOpen = async () => {
     try {
@@ -81,10 +88,12 @@ const ManagePetCard = ({
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handlePickShelter = () => {
-    handleCloseShelter();
+    setSelectedShelter(null);
+    setConfirmedShelter({
+      shelterId: null,
+      shelterName: null,
+      shelterLocation: null,
+    });
   };
 
   const handleCancelPick = () => {
@@ -113,9 +122,33 @@ const ManagePetCard = ({
         }
       );
       if (res.status == 200) {
-        onDeleted();
+        onRefresh();
         setOpen(false);
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSavePet = async () => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/Manager/approve-pet/${petId}/${confirmedShelter.shelterId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status == 200) {
+        console.log("pet has been moved to shelter");
+        onRefresh();
+        handleClose();
+      }
+      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -137,11 +170,6 @@ const ManagePetCard = ({
     fetchUserByID();
   }, [userId]);
 
-  // Add this useEffect to log the user whenever it updates
-  useEffect(() => {
-    console.log("Updated user:", user);
-  }, [user]);
-
   const formatReadableDate = (isoDateString) => {
     const date = new Date(isoDateString);
     return date.toLocaleDateString("en-US", {
@@ -151,9 +179,24 @@ const ManagePetCard = ({
     });
   };
 
-  const handleSelectShelter = (id) => {
-    setSelectedShelter(id);
+  const handleSelectShelter = (shelter) => {
+    console.log(shelter);
+    setSelectedShelter(shelter);
   };
+
+  const handleConfirmShelter = (shelter) => {
+    setConfirmedShelter({
+      shelterId: shelter.shelterId,
+      shelterName: shelter.shelterName,
+      shelterLocation: shelter.shelterLocation,
+    });
+    console.log(confirmedShelter);
+    handleCloseShelter();
+  };
+
+  useEffect(() => {
+    console.log(token);
+  }, []);
 
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
@@ -283,360 +326,400 @@ const ManagePetCard = ({
       >
         <Box sx={style}>
           <div
-            className="header"
+            className=""
             style={{
               display: "flex",
               justifyContent: "space-between",
-              //   gap: 30,
-              alignItems: "center",
-              marginBottom: "20px",
+              alignItems: "flex-start",
             }}
           >
             <div
-              className="left"
+              className="header"
               style={{
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                // gap: 10,
+                justifyContent: "space-between",
+                gap: 80,
+                alignItems: "center",
+                marginBottom: "20px",
               }}
             >
-              <div className="" style={{ display: "flex", gap: 10 }}>
-                <CustomChip
-                  title={isApproved ? "Approved" : "Awaiting shelter"}
-                  color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
-                  bgColor={
-                    isApproved
-                      ? "rgb(22, 163, 74, 0.1)"
-                      : "rgb(217, 119, 6, 0.1)"
-                  }
-                  fontSize={12}
-                  fontWeight={600}
-                />
-                <Typography
-                  variant="body1"
-                  color="#667479"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  fontFamily={fontFamily.msr}
-                  fontSize={13}
-                >
-                  Uploaded Date:{" "}
+              <div
+                className="left"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  // gap: 10,
+                }}
+              >
+                <div className="" style={{ display: "flex", gap: 10 }}>
+                  <CustomChip
+                    title={isApproved ? "Approved" : "Awaiting shelter"}
+                    color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
+                    bgColor={
+                      isApproved
+                        ? "rgb(22, 163, 74, 0.1)"
+                        : "rgb(217, 119, 6, 0.1)"
+                    }
+                    fontSize={12}
+                    fontWeight={600}
+                  />
                   <Typography
                     variant="body1"
                     color="#667479"
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
                     fontFamily={fontFamily.msr}
-                    fontWeight={600}
                     fontSize={13}
                   >
-                    {formatReadableDate(uploadDate)}
+                    Uploaded Date:{" "}
+                    <Typography
+                      variant="body1"
+                      color="#667479"
+                      fontFamily={fontFamily.msr}
+                      fontWeight={600}
+                      fontSize={13}
+                    >
+                      {formatReadableDate(uploadDate)}
+                    </Typography>
                   </Typography>
+                </div>
+                <Typography
+                  variant="body1"
+                  color="initial"
+                  fontSize={24}
+                  fontWeight={600}
+                  fontFamily={fontFamily.msr}
+                  //   textAlign={"center"}
+                  sx={{ display: "flex", alignItems: "center", mt: "10px" }}
+                >
+                  {isApproved
+                    ? `You already found a Shelter for ${name}`
+                    : `Finding Shelter for ${name}`}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  fontFamily={fontFamily.msr}
+                  color="#667479"
+                  fontSize={14}
+                  //   textAlign={"center"}
+                >
+                  {isApproved
+                    ? `Staff will be notified about ${name}`
+                    : "Please review this form to ensure accurate shelter placement."}
                 </Typography>
               </div>
+
+              <Avatar src={img} sx={{ width: "80px", height: "80px" }} />
+            </div>
+            <IconButton onClick={() => handleClose()}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+
+          <div
+            className="modal-content"
+            style={{
+              height: confirmedShelter.shelterId && "480px",
+              overflowY: confirmedShelter.shelterId && "scroll",
+              paddingRight: "10px",
+            }}
+          >
+            <div className="user-info" style={{ marginBottom: "15px" }}>
               <Typography
                 variant="body1"
                 color="initial"
-                fontSize={24}
-                fontWeight={600}
+                fontSize={16}
                 fontFamily={fontFamily.msr}
-                //   textAlign={"center"}
-                sx={{ display: "flex", alignItems: "center", mt: "10px" }}
+                fontWeight={600}
+                sx={{ mb: "15px" }}
               >
-                {isApproved
-                  ? `You already found a Shelter for ${name}`
-                  : `Finding Shelter for ${name}`}
+                User Information
               </Typography>
+              <div
+                className="name-address"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                }}
+              >
+                <TextField
+                  id=""
+                  placeholder="Enter your full name"
+                  name="fullName"
+                  label="Full name"
+                  value={user.fullname}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                  InputLabelProps={
+                    {
+                      // shrink: form.fullName ? true : undefined,
+                    }
+                  }
+                />
+                <TextField
+                  id=""
+                  label="Address"
+                  placeholder="Enter your address"
+                  name="address"
+                  value={user.address}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                  InputLabelProps={
+                    {
+                      // shrink: form.address ? true : undefined,
+                    }
+                  }
+                />
+              </div>
+              <div
+                className="contact-email"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  marginTop: "20px",
+                }}
+              >
+                <TextField
+                  id=""
+                  placeholder="Enter your contact number"
+                  name="contactNumber"
+                  label="Contact number"
+                  value={user.phoneNumber}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                  InputLabelProps={
+                    {
+                      // shrink: form.contactNumber ? true : undefined,
+                    }
+                  }
+                />
 
+                <TextField
+                  id=""
+                  label="Email"
+                  placeholder="Enter your email address"
+                  name="email"
+                  value={user.email}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                  InputLabelProps={
+                    {
+                      // shrink: form.email ? true : undefined,
+                    }
+                  }
+                />
+              </div>
+            </div>
+            <div className="pet-info">
               <Typography
                 variant="body1"
+                color="initial"
+                fontSize={16}
                 fontFamily={fontFamily.msr}
-                color="#667479"
-                fontSize={14}
-                //   textAlign={"center"}
+                fontWeight={600}
+                sx={{ mb: "15px" }}
               >
-                {isApproved
-                  ? `Staff will be notified about ${name}`
-                  : "Please review this form to ensure accurate shelter placement."}
+                Pet Information
               </Typography>
-            </div>
-            <Avatar src={img} sx={{ width: "80px", height: "80px" }} />
-          </div>
-          <div className="user-inf" style={{ marginBottom: "15px" }}>
-            <Typography
-              variant="body1"
-              color="initial"
-              fontSize={16}
-              fontFamily={fontFamily.msr}
-              fontWeight={600}
-              sx={{ mb: "15px" }}
-            >
-              User Information
-            </Typography>
-            <div
-              className="name-address"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 10,
-              }}
-            >
-              <TextField
-                id=""
-                placeholder="Enter your full name"
-                name="fullName"
-                label="Full name"
-                value={user.fullname}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
+              <div
+                className="name-address"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
                 }}
-                InputLabelProps={
-                  {
-                    // shrink: form.fullName ? true : undefined,
-                  }
-                }
-              />
-              <TextField
-                id=""
-                label="Address"
-                placeholder="Enter your address"
-                name="address"
-                value={user.address}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
+              >
+                <TextField
+                  id=""
+                  placeholder="Enter pet name"
+                  name="petName"
+                  label="Pet name"
+                  value={name}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+                <TextField
+                  id=""
+                  label="Pet type"
+                  placeholder="Enter type of pet"
+                  name="petType"
+                  value={petType}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+                <TextField
+                  id=""
+                  label="Pet breed"
+                  placeholder="Enter breed of pet"
+                  name="petBreed"
+                  value={petBreed}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+              </div>
+              <div
+                className="name-address"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  marginTop: "20px",
                 }}
-                InputLabelProps={
-                  {
-                    // shrink: form.address ? true : undefined,
-                  }
-                }
-              />
-            </div>
-            <div
-              className="contact-email"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 10,
-                marginTop: "20px",
-              }}
-            >
-              <TextField
-                id=""
-                placeholder="Enter your contact number"
-                name="contactNumber"
-                label="Contact number"
-                value={user.phoneNumber}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-                InputLabelProps={
-                  {
-                    // shrink: form.contactNumber ? true : undefined,
-                  }
-                }
-              />
+              >
+                <TextField
+                  id=""
+                  placeholder="Enter pet name"
+                  name="petAge"
+                  label="Pet age"
+                  value={age}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+                <TextField
+                  id=""
+                  label="Pet color"
+                  placeholder="Enter type of pet"
+                  name="petColor"
+                  value={petColor}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+                <TextField
+                  id=""
+                  label="Pet size"
+                  placeholder="Enter breed of pet"
+                  name="petSize"
+                  value={petSize}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+              </div>
 
-              <TextField
-                id=""
-                label="Email"
-                placeholder="Enter your email address"
-                name="email"
-                value={user.email}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
+              <div
+                className="name-address"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  marginTop: "20px",
                 }}
-                InputLabelProps={
-                  {
-                    // shrink: form.email ? true : undefined,
-                  }
-                }
-              />
-            </div>
-          </div>
-          <div className="">
-            <Typography
-              variant="body1"
-              color="initial"
-              fontSize={16}
-              fontFamily={fontFamily.msr}
-              fontWeight={600}
-              sx={{ mb: "15px" }}
-            >
-              Pet Information
-            </Typography>
-            <div
-              className="name-address"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 10,
-              }}
-            >
-              <TextField
-                id=""
-                placeholder="Enter pet name"
-                name="petName"
-                label="Pet name"
-                value={name}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label="Pet type"
-                placeholder="Enter type of pet"
-                name="petType"
-                value={petType}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label="Pet breed"
-                placeholder="Enter breed of pet"
-                name="petBreed"
-                value={petBreed}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-            </div>
-            <div
-              className="name-address"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 10,
-                marginTop: "20px",
-              }}
-            >
-              <TextField
-                id=""
-                placeholder="Enter pet name"
-                name="petAge"
-                label="Pet age"
-                value={age}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label="Pet color"
-                placeholder="Enter type of pet"
-                name="petColor"
-                value={petColor}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label="Pet size"
-                placeholder="Enter breed of pet"
-                name="petSize"
-                value={petSize}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-            </div>
+              >
+                <TextField
+                  id=""
+                  placeholder="Enter pet name"
+                  name="petMedical"
+                  label="Medical condition"
+                  value={medicalCondition}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+                <TextField
+                  id=""
+                  label="Pet gender"
+                  placeholder="Enter type of pet"
+                  name="gender"
+                  value={petGender}
+                  //   onChange={(e) => handleChangeForm(e)}
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                  }}
+                />
+              </div>
 
-            <div
-              className="name-address"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 10,
-                marginTop: "20px",
-              }}
-            >
-              <TextField
-                id=""
-                placeholder="Enter pet name"
-                name="petMedical"
-                label="Medical condition"
-                value={medicalCondition}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label="Pet gender"
-                placeholder="Enter type of pet"
-                name="gender"
-                value={petGender}
-                //   onChange={(e) => handleChangeForm(e)}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
+              {confirmedShelter.shelterId !== null && (
+                <div className="" style={{ display: "flex", gap: 10 }}>
+                  <TextField
+                    id=""
+                    label="Shelter Name"
+                    value={confirmedShelter.shelterName}
+                    name="petDesc"
+                    // onChange={(e) => handleChangeForm(e)}
+                    fullWidth
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                      },
+                      mt: "20px",
+                    }}
+                  />
+                  <TextField
+                    id=""
+                    label="Shelter Location"
+                    value={confirmedShelter.shelterLocation}
+                    // name="petDesc"
+                    // onChange={(e) => handleChangeForm(e)}
+                    fullWidth
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                      },
+                      mt: "20px",
+                    }}
+                  />
+                </div>
+              )}
             </div>
-
-            {/* <TextField
-              id=""
-              label="About pet"
-              value={aboutPet}
-              name="petDesc"
-              // onChange={(e) => handleChangeForm(e)}
-              fullWidth
-              multiline
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "10px",
-                },
-                mt: "20px",
-              }}
-            /> */}
           </div>
           <div
             className="button"
@@ -644,7 +727,7 @@ const ManagePetCard = ({
               display: "flex",
               justifyContent: "space-between",
               marginTop: "20px",
-              // gap: 15,
+              // gap: 243,
             }}
           >
             <Button
@@ -665,32 +748,32 @@ const ManagePetCard = ({
               <Button
                 sx={{
                   textTransform: "none",
-                  fontWeight: 600,
                   color: "#103559",
                   fontSize: "16px",
                   borderRadius: "10px",
-                  border: "1px solid #103559",
                   fontFamily: fontFamily.msr,
                   p: "12px 20px",
+                  border: "1px solid #103559",
                 }}
-                onClick={() => handleClose()}
+                //   disabled={!isFormComplete()}
+                onClick={() => handleOpenShelters()}
               >
-                Cancel
+                Move to Shelter
               </Button>
               <Button
                 sx={{
                   textTransform: "none",
-                  bgcolor: "#103559",
+                  bgcolor: confirmedShelter.shelterId && "#103559",
                   fontSize: "16px",
                   borderRadius: "10px",
                   fontFamily: fontFamily.msr,
                   p: "12px 20px",
                   color: "white",
                 }}
-                //   disabled={!isFormComplete()}
-                onClick={() => handleOpenShelters()}
+                disabled={confirmedShelter.shelterId ? false : true}
+                onClick={() => handleSavePet()}
               >
-                Move to Shelter
+                Save Pet
               </Button>
             </div>
           </div>
@@ -737,7 +820,7 @@ const ManagePetCard = ({
             className=""
             style={{
               overflowY: "scroll",
-              height: "450px",
+              height: "480px",
               display: "flex",
               flexDirection: "column",
               gap: 10,
@@ -755,11 +838,10 @@ const ManagePetCard = ({
                   alignItems: "center",
                   gap: 10,
                   padding: "10px",
-                  border:
-                    selectedShelter === s.shelterId && "1px solid #103559",
+                  border: selectedShelter === s && "1px solid #103559",
                   borderRadius: "10px",
                 }}
-                onClick={() => handleSelectShelter(s.shelterId)}
+                onClick={() => handleSelectShelter(s)}
               >
                 <CardMedia
                   component={"img"}
@@ -793,7 +875,7 @@ const ManagePetCard = ({
                     fontSize={16}
                     sx={{ mt: "8px", display: "flex", alignItems: "center" }}
                   >
-                    Capacity: 50/{s.capacity}
+                    Capacity: {s.approvedPets.length}/{s.capacity}
                     <div
                       className="progress-bar"
                       style={{
@@ -807,7 +889,9 @@ const ManagePetCard = ({
                       <div
                         className="progress"
                         style={{
-                          width: "20%",
+                          width: `${
+                            (s.approvedPets.length / s.capacity) * 100
+                          }%`, // Calculate the percentage
                           backgroundColor: "#103559",
                           height: "5px",
                           borderRadius: "10px",
@@ -854,7 +938,7 @@ const ManagePetCard = ({
                 color: "white",
               }}
               disabled={selectedShelter === null}
-              // onClick={() => handleOpenShelters()}
+              onClick={() => handleConfirmShelter(selectedShelter)}
             >
               Confirm
             </Button>

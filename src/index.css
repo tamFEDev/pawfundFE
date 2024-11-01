@@ -4,4 +4,30 @@ body, :root {
   margin: 0;
 }
 
+/* Style the scrollbar */
+.modal-content::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light background color for the scrollbar track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #bbb; /* Light color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 2px solid #f0f0f0; /* Adds a border to create a smoother look */
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #999; /* Darker color on hover for better visibility */
+}
+
+/* For Firefox */
+.modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f0f0f0; /* Thumb color and lighter track background */
+}
+
 

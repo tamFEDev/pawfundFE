@@ -1,6 +1,8 @@
-import { imgURL } from "../constants";
+import { useEffect } from "react";
+import { BASE_URL, imgURL } from "../constants";
 import PetCard from "./PetCard";
 import StaffPetCard from "./StaffPetCard";
+import axios from "axios";
 
 const petInfo = [
   {
@@ -61,7 +63,15 @@ const petInfo = [
   },
 ];
 
-const PetList = ({ mb, amount, mt, jc, isStaff }) => {
+const PetList = ({ mb, amount, mt, jc, isStaff, shelterId }) => {
+  // useEffect(() => {
+  //   const fetchPets = async () => {
+  //     let res;
+  //     if (shelterId) {
+  //       res = await axios.get(`${BASE_URL}/api/`);
+  //     }
+  //   };
+  // }, []);
   return (
     <>
       {isStaff ? (

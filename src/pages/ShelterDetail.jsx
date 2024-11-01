@@ -213,42 +213,6 @@ const ShelterDetail = () => {
             <CustomDivider />
             <PetDetailTag title={"Capacity"} value={shelterDetail.capacity} />
 
-            {/* <div
-              className="pet-gender"
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                variant="body1"
-                color="initial"
-                style={{ width: "150px", paddingRight: "80px" }}
-                fontFamily={fontFamily.msr}
-              >
-                Pet list
-              </Typography>
-              <div
-                className=""
-                style={{ display: "flex", alignItems: "center", gap: 15 }}
-              >
-                <CustomChip
-                  title={`${shelterDetail.dog} dogs`}
-                  color={"#FFB775"}
-                  bgColor={"rgb(255,183,117,0.1)"}
-                  fontSize={14}
-                  fontWeight={600}
-                />
-                <CustomChip
-                  title={`${shelterDetail.cat} cats`}
-                  color={"#9E896A"}
-                  bgColor={"rgb(158,137,106,0.1)"}
-                  fontSize={14}
-                  fontWeight={600}
-                />
-              </div>
-            </div> */}
             <Button
               sx={{
                 bgcolor: "#003459",
