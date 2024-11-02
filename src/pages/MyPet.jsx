@@ -54,8 +54,7 @@ const MyPet = () => {
             uploadDate={d.createdAt}
             img={d.petImages.length > 0 ? d.petImages[0].imageUrl : imgURL.dogo}
             // img={d.petImages.imageUrl ? d.petImages.imageUrl : imgURL.dogo}
-            shelterName={d.shelterName}
-            shelterAddress={d.shelterAddress}
+            shelterId={d.shelterId}
             petType={d.petCategoryId}
             petColor={d.color}
             petSize={d.size}

@@ -15,7 +15,7 @@ const ShelterPet = () => {
         width: "1050px",
       }}
     >
-      <PetList isStaff={true} />
+      {/* <PetList isStaff={true} /> */}
     </div>
   );
 };

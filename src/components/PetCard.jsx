@@ -1,22 +1,75 @@
 import { Button, Card, CardMedia, Typography } from "@mui/material";
-import { fontFamily } from "../constants";
+import { BASE_URL, fontFamily } from "../constants";
 import { useNavigate } from "react-router-dom";
+import CustomChip from "./CustomChip";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const PetCard = ({ name, gender, type, location, image, key }) => {
+const PetCard = ({
+  name,
+  gender,
+  type,
+  location,
+  image,
+  key,
+  petCategory,
+  petId,
+  shelterId,
+}) => {
   const navigate = useNavigate();
+
+  const [shelter, setShelter] = useState({
+    name: null,
+    address: null,
+  });
+
+  const handleNavigate = (id) => {
+    navigate(`/adoption/${id}`);
+  };
+
+  useEffect(() => {
+    const fetchShelterDetail = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/Shelter/GetInformationShelter/${shelterId}`
+      );
+      if (res.status == 200) {
+        setShelter({
+          name: res.data.shelterName,
+          address: res.data.shelterLocation,
+        });
+      }
+    };
+    fetchShelterDetail();
+  }, [shelterId]);
   return (
     <Card key={key} sx={{ p: "15px", width: "300px", borderRadius: "20px" }}>
-      <CardMedia component={"img"} src={image} sx={{ width: "300px" }} />
-      <div className="card-content" style={{ marginTop: "20px" }}>
-        <Typography
-          variant="body1"
-          color="initial"
-          fontSize={16}
-          fontWeight={600}
-          fontFamily={"Montserrat"}
+      <CardMedia
+        component={"img"}
+        src={image}
+        sx={{ width: "300px", height: "300px", borderRadius: "10px" }}
+      />
+      <div className="card-content" style={{ marginTop: "10px" }}>
+        <div
+          className="header"
+          style={{ display: "flex", gap: 10, alignItems: "center" }}
         >
-          {name}
-        </Typography>
+          <Typography
+            variant="body1"
+            color="initial"
+            fontSize={16}
+            fontWeight={600}
+            fontFamily={"Montserrat"}
+          >
+            {name}
+          </Typography>
+          <CustomChip
+            title={petCategory == 1 ? "dog" : "cat"}
+            color={"#FFB775"}
+            bgColor={"rgb(255,183,117,0.1)"}
+            fontSize={14}
+            fontWeight={600}
+          />
+        </div>
         <div
           className=""
           style={{
@@ -34,7 +87,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
               alignItems: "center",
               gap: 1,
             }}
-            fontSize={12}
+            fontSize={13}
             fontFamily={"Montserrat"}
           >
             Gender:{" "}
@@ -42,7 +95,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
               variant="body1"
               color="#667479"
               fontFamily={"Montserrat"}
-              fontSize={12}
+              fontSize={13}
               fontWeight={600}
             >
               {gender}
@@ -62,7 +115,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
             color="#667479"
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
             fontFamily={"Montserrat"}
-            fontSize={12}
+            fontSize={13}
           >
             Type:{" "}
             <Typography
@@ -70,7 +123,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
               color="#667479"
               fontFamily={fontFamily.msr}
               fontWeight={600}
-              fontSize={12}
+              fontSize={13}
             >
               {type}
             </Typography>
@@ -79,7 +132,35 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
         <Typography
           variant="body1"
           color="#667479"
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            my: "10px",
+          }}
+          fontFamily={fontFamily.msr}
+          fontSize={12}
+        >
+          Shelter:{" "}
+          <Typography
+            variant="body1"
+            color="#667479"
+            fontFamily={fontFamily.msr}
+            fontSize={13}
+            fontWeight={600}
+          >
+            {shelter.name}
+          </Typography>
+        </Typography>
+        <Typography
+          variant="body1"
+          color="#667479"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            width: "100%",
+          }}
           fontFamily={fontFamily.msr}
           fontSize={12}
         >
@@ -88,10 +169,15 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
             variant="body1"
             color="#667479"
             fontFamily={fontFamily.msr}
-            fontSize={12}
+            fontSize={13}
             fontWeight={600}
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
           >
-            {location}
+            {shelter.address}
           </Typography>
         </Typography>
       </div>
@@ -106,7 +192,7 @@ const PetCard = ({ name, gender, type, location, image, key }) => {
           marginTop: "24px",
           fontFamily: fontFamily.msr,
         }}
-        onClick={() => navigate("/adoption/id")}
+        onClick={() => handleNavigate(petId)}
       >
         More about me!
       </Button>

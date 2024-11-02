@@ -1,3 +1,4 @@
+// import { axios } from "axios";
 import {
   Avatar,
   Box,
@@ -8,10 +9,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { fontFamily } from "../constants";
+import { useEffect, useState } from "react";
+import { BASE_URL, fontFamily } from "../constants";
 import { useNavigate } from "react-router-dom";
 import CustomChip from "./CustomChip";
+import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -32,8 +34,7 @@ const MyPetCard = ({
   age,
   uploadDate,
   img,
-  shelterName,
-  shelterAddress,
+  shelterId,
   petType,
   petColor,
   petSize,
@@ -44,6 +45,10 @@ const MyPetCard = ({
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [shelter, setShelter] = useState({
+    name: null,
+    address: null,
+  });
 
   const handleOpen = () => {
     setOpen(true);
@@ -61,6 +66,25 @@ const MyPetCard = ({
       day: "numeric",
     });
   };
+
+  useEffect(() => {
+    const fetchShelterData = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Shelter/GetInformationShelter/${shelterId}`
+        );
+        if (res.status == 200) {
+          setShelter({
+            name: res.data.name,
+            address: res.data.address,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchShelterData();
+  });
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
       <CardMedia
@@ -415,7 +439,7 @@ const MyPetCard = ({
               <TextField
                 id=""
                 label="Shelter name"
-                value={shelterName}
+                // value={shelterName}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",
@@ -426,7 +450,7 @@ const MyPetCard = ({
               <TextField
                 id=""
                 label="Shelter address"
-                value={shelterAddress}
+                // value={shelterAddress}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",

@@ -11,7 +11,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import Header from "../components/Header";
-import { fontFamily, imgURL } from "../constants";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import CustomChip from "../components/CustomChip";
 import PetDetailTag from "../components/PetDetailTag";
 import CustomDivider from "../components/CustomDivider";
@@ -19,21 +19,23 @@ import PetList from "../components/PetList";
 import AdoptionBanner from "../components/AdoptionBanner";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
-const petDetail = {
-  name: "Shibe milo",
-  animal: "dog",
-  breed: "Shiba inu",
-  age: "2 years old",
-  medicalCondition: "Vaccinated",
-  publishDate: "12-Oct-2022",
-  size: "small",
-  color: "black",
-  shelterLocation: "Hanoi, Vietnam",
-  shelterName: "Trại thú cưng ABC - TP. Hồ Chí Minh",
-  gender: "Male",
-  desc: "Buddy is a friendly and energetic Golden Retriever who loves to play fetch and go for long walks. Hes great with kids and other dogs, making him the perfect addition to an active family. Buddy is fully vaccinated and house-trained.",
-};
+// const petDetail = {
+//   name: "Shibe milo",
+//   animal: "dog",
+//   breed: "Shiba inu",
+//   age: "2 years old",
+//   medicalCondition: "Vaccinated",
+//   publishDate: "12-Oct-2022",
+//   size: "small",
+//   color: "black",
+//   shelterLocation: "Hanoi, Vietnam",
+//   shelterName: "Trại thú cưng ABC - TP. Hồ Chí Minh",
+//   gender: "Male",
+//   desc: "Buddy is a friendly and energetic Golden Retriever who loves to play fetch and go for long walks. Hes great with kids and other dogs, making him the perfect addition to an active family. Buddy is fully vaccinated and house-trained.",
+// };
 
 const adoptionStep = [
   "1. Fill out our adoption application form",
@@ -55,6 +57,7 @@ const style = {
 };
 
 const PetDetail = () => {
+  const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [form, setForm] = useState({
@@ -66,20 +69,69 @@ const PetDetail = () => {
     isAdoptPetBefore: null,
     reason: "",
   });
+  const [petDetail, setPetDetail] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchPetDetail = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Users/get-approved-pet-by-id?id=${id}`
+        );
+        if (res.status === 200) {
+          setPetDetail(res.data.data);
+        }
+        console.log("Pet Detail:", res.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchPetDetail();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchShelterDetail = async () => {
+      if (!petDetail?.shelterId) return; // Only fetch if shelterId is available
+
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Shelter/GetInformationShelter/${petDetail.shelterId}`
+        );
+        if (res.status === 200) {
+          setPetDetail((prev) => ({
+            ...prev,
+            shelterName: res.data.shelterName,
+          }));
+        }
+        console.log("Shelter Detail:", res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchShelterDetail();
+  }, [petDetail.shelterId, id]); // Trigger only when shelterId is available
 
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
     setOpen(false);
   };
+
   const handleContinueForm = () => {
     setOpen(false);
     setOpenForm(true);
   };
+
+  const handleNavigate = () => {
+    navigate(`/shelters/${petDetail.shelterId}`);
+  };
+
   const handleCloseForm = () => {
     setForm({
       fullName: "",
@@ -92,10 +144,12 @@ const PetDetail = () => {
     });
     setOpenForm(false);
   };
+
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
+
   const isFormComplete = () => {
     const {
       fullName,
@@ -117,6 +171,7 @@ const PetDetail = () => {
       isAdoptPetBefore !== null
     );
   };
+
   return (
     <div>
       <Header />
@@ -136,8 +191,8 @@ const PetDetail = () => {
         >
           <CardMedia
             component={"img"}
-            src={imgURL.shiba}
-            sx={{ width: "630px", borderRadius: "10px" }}
+            src={petDetail.imageUrl}
+            sx={{ width: "630px", borderRadius: "10px", height: "630px" }}
           />
           <div className="pet-desc" style={{ width: "600px" }}>
             <div
@@ -151,22 +206,24 @@ const PetDetail = () => {
                 fontWeight={700}
                 fontFamily={fontFamily.msr}
               >
-                {petDetail.name}
+                {petDetail.petName}
               </Typography>
-              <CustomChip
-                title={`dog`}
-                color={"#FFB775"}
-                bgColor={"rgb(255,183,117,0.1)"}
-                fontSize={14}
-                fontWeight={600}
-              />
-              <CustomChip
-                title={petDetail.breed}
-                color={"#FFB775"}
-                bgColor={"rgb(255,183,117,0.1)"}
-                fontSize={14}
-                fontWeight={600}
-              />
+              <div className="" style={{ display: "flex", gap: 20 }}>
+                <CustomChip
+                  title={petDetail.petCategoryId == 1 ? "dog" : "cat"}
+                  color={"#FFB775"}
+                  bgColor={"rgb(255,183,117,0.1)"}
+                  fontSize={14}
+                  fontWeight={600}
+                />
+                <CustomChip
+                  title={petDetail.petType}
+                  color={"#FFB775"}
+                  bgColor={"rgb(255,183,117,0.1)"}
+                  fontSize={14}
+                  fontWeight={600}
+                />
+              </div>
             </div>
             <div
               className="pet-desc"
@@ -177,7 +234,7 @@ const PetDetail = () => {
                 color="initial"
                 fontFamily={fontFamily.msr}
               >
-                {petDetail.desc}
+                {petDetail.description}
               </Typography>
             </div>
             <PetDetailTag title={"Gender"} value={petDetail.gender} />
@@ -199,13 +256,20 @@ const PetDetail = () => {
             />
             <CustomDivider />
             <PetDetailTag
-              title={"Publish date"}
-              value={petDetail.publishDate}
+              title={"Shelter name"}
+              value={
+                <div
+                  onClick={() => handleNavigate()}
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
+                >
+                  {petDetail.shelterName}
+                </div>
+              }
             />
             <CustomDivider />
             <PetDetailTag
-              title={"Shelter name"}
-              value={petDetail.shelterName}
+              title={"Publish date"}
+              value={petDetail.publishDate || "N/A"}
             />
             <Button
               sx={{

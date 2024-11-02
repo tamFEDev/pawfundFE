@@ -1,10 +1,12 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardMedia,
   Modal,
   OutlinedInput,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -48,6 +50,8 @@ const UploadPets = () => {
     gender: "",
   });
 
+  const [open, setOpen] = useState(false);
+
   const [viewImage, setViewImage] = useState(false);
 
   useEffect(() => {
@@ -74,6 +78,14 @@ const UploadPets = () => {
 
   const handleClose = () => {
     setViewImage(false);
+  };
+
+  const handleOpenToaster = () => {
+    setOpen(true);
+  };
+
+  const handleCloseToaster = () => {
+    setOpen(false);
   };
 
   const handleSavePet = async () => {
@@ -112,7 +124,7 @@ const UploadPets = () => {
 
       if (res.status >= 200 && res.status < 300) {
         console.log("Pet uploaded successfully:", res.data);
-        return res.data;
+        handleOpenToaster();
       }
     } catch (err) {
       console.error(
@@ -126,6 +138,20 @@ const UploadPets = () => {
 
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleCloseToaster}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseToaster}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Upload Pet successfully
+        </Alert>
+      </Snackbar>
       <Typography
         variant="body1"
         color="initial"

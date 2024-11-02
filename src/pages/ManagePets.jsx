@@ -126,8 +126,6 @@ const ManagePets = () => {
               age={d.age}
               uploadDate={d.createdAt}
               img={d?.petImages[0]?.imageUrl}
-              shelterName={d.shelterName}
-              shelterAddress={d.shelterAddress}
               petType={d.petCategoryId}
               petColor={d.color}
               petSize={d.size}
@@ -136,6 +134,7 @@ const ManagePets = () => {
               aboutPet={d.description}
               userId={d.userId}
               petId={d.petId}
+              shelterId={d?.shelterId}
               onRefresh={fetchAllPets}
             />
           ))

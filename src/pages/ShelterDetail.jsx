@@ -47,16 +47,21 @@ const style = {
 
 const ShelterDetail = () => {
   const [open, setOpen] = useState(false);
+
   const [selectedPrice, setSelectedPrice] = useState(null);
+
   const [shelterDetail, setShelterDetail] = useState({});
   const [form, setForm] = useState({
     donation: 0,
     note: "",
   });
+
+  const [pets, setPets] = useState([]);
+
   const [customDonation, setCustomDonation] = useState(null);
-  const [URL, setURL] = useState("");
+
   const { user } = useGlobalContext();
-  const navigate = useNavigate();
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -74,6 +79,23 @@ const ShelterDetail = () => {
     };
 
     fetchDetail();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchPetsInShelter = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Users/get-pets-in-shelter/${id}`
+        );
+        if (res.status == 200) {
+          setPets(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchPetsInShelter();
   }, [id]);
 
   useEffect(() => {
@@ -258,7 +280,7 @@ const ShelterDetail = () => {
           Here are some wonderful pets waiting for their forever home
         </Typography>
       </div>
-      <PetList amount={4} />
+      <PetList amount={4} petsInShelter={pets} />
       <AdoptionBanner mt={"60px"} />
       <Footer mt={"100px"} />
       <div className="donation-modal">

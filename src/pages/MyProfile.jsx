@@ -1,4 +1,11 @@
-import { Button, Card, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Card,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import CustomDivider from "../components/CustomDivider";
 import { BASE_URL, fontFamily } from "../constants";
@@ -18,6 +25,7 @@ const MyProfile = () => {
     newPassword: "",
     oldPassword: "",
   });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     console.log(user);
@@ -62,6 +70,7 @@ const MyProfile = () => {
           setUser(updatedUser); // Update the user state
           localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage with new user data
           console.log(updatedUser);
+          handleOpen();
         }
       } catch (err) {
         console.log(err);
@@ -78,8 +87,26 @@ const MyProfile = () => {
     setForm({ ...form, [name]: value });
   };
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          User info updated successfully
+        </Alert>
+      </Snackbar>
       <Typography
         variant="body1"
         color="initial"

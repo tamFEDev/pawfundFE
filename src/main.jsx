@@ -74,7 +74,7 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/adoption/id",
+    path: "/adoption/:id",
     element: (
       <ProtectedRoute>
         <PetDetail />

@@ -96,11 +96,15 @@ const Home = () => {
       </div>
       <div
         className="pet-section"
-        style={{ padding: "0 60px", marginTop: "240px", marginBottom: "60px" }}
+        style={{ marginTop: "240px", marginBottom: "60px" }}
       >
         <div
           className="pet-header"
-          style={{ display: "flex", justifyContent: "space-between" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0 60px",
+          }}
         >
           <div className="left">
             <Typography
