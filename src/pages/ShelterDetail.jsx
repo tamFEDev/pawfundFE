@@ -60,7 +60,7 @@ const ShelterDetail = () => {
 
   const [customDonation, setCustomDonation] = useState(null);
 
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
 
   const { id } = useParams();
 
@@ -153,10 +153,16 @@ const ShelterDetail = () => {
         transactionAmount: form.donation,
         isMoneyDonation: true,
         isResourceDonation: true,
-        userId: user.userId,
         transactionTypeId: 1,
+        shelterId: id,
+        note: form.note,
       };
-      const res = await axios.post(`${BASE_URL}/api/Transaction/create`, body);
+      const res = await axios.post(`${BASE_URL}/api/Transaction/create`, body, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (res.status === 200) {
         window.location.href = res.data.vnpayUrl;
       }

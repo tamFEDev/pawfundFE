@@ -1,10 +1,11 @@
-import { Button, CardMedia, Typography } from "@mui/material";
-import React, { useEffect } from "react";
-import { fontFamily, imgURL } from "../constants";
+import { Box, Button, CardMedia, Modal, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import PetDetailTag from "../components/PetDetailTag";
 import CustomDivider from "../components/CustomDivider";
 import CustomChip from "../components/CustomChip";
 import { useGlobalContext } from "../GlobalProvider";
+import axios from "axios";
 
 const shelterDetail = {
   name: "Happy Paws Shelter",
@@ -19,11 +20,57 @@ const shelterDetail = {
   cat: 30,
 };
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 650,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "20px",
+  //   overflowY: "scroll",
+};
+
 const AboutShelter = () => {
   const { user } = useGlobalContext();
+  const [detail, setDetail] = useState({});
+
+  const fetchShelterDetail = async (shelterId) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/Shelter/GetInformationShelter/${shelterId}`
+      );
+      setDetail(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+    console.log(detail);
+  };
+
   useEffect(() => {
-    console.log(user.roleName);
+    console.log(user.userId);
   }, []);
+
+  useEffect(() => {
+    const fetchShelterID = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/staff/getShelterId?staffId=${user.userId}`
+        );
+        const shelterId = res.data.shelterId;
+        console.log(shelterId);
+        fetchShelterDetail(shelterId);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchShelterID();
+  }, []);
+
+  // Function to fetch shelter details
+
   return (
     <div
       className=""
@@ -34,15 +81,21 @@ const AboutShelter = () => {
         display: "inline-block",
         backgroundColor: "white",
         borderRadius: "10px",
+        width: "1230px",
       }}
     >
       <div
         className="pet-detail"
-        style={{ display: "flex", alignItems: "center", gap: 50 }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 50,
+          padding: "6px  0",
+        }}
       >
         <CardMedia
           component={"img"}
-          src={imgURL.shelter}
+          src={detail.shelterImage}
           sx={{ width: "500px", height: "500px", borderRadius: "10px" }}
         />
         <div className="pet-desc" style={{ width: "600px" }}>
@@ -57,7 +110,7 @@ const AboutShelter = () => {
               fontWeight={700}
               fontFamily={fontFamily.msr}
             >
-              {shelterDetail.name}
+              {detail.shelterName}
             </Typography>
           </div>
           <div
@@ -69,25 +122,21 @@ const AboutShelter = () => {
               color="initial"
               fontFamily={fontFamily.msr}
             >
-              {shelterDetail.desc}
+              {detail.description}
             </Typography>
           </div>
           <PetDetailTag title={"Location"} value={shelterDetail.location} />
           <CustomDivider />
-          <PetDetailTag
-            title={"Contact number"}
-            value={shelterDetail.contactNumber}
-          />
+          <PetDetailTag title={"Contact number"} value={detail.contact} />
           <CustomDivider />
           <PetDetailTag title={"Email"} value={shelterDetail.email} />
           <CustomDivider />
           <PetDetailTag
             title={"Opening / Closing"}
-            value={shelterDetail.ocTime}
+            value={detail.openingClosing}
           />
           <CustomDivider />
-          <PetDetailTag title={"Capacity"} value={shelterDetail.capacity} />
-          <CustomDivider />
+
           <div
             className="pet-gender"
             style={{
@@ -99,12 +148,12 @@ const AboutShelter = () => {
             <Typography
               variant="body1"
               color="initial"
-              style={{ width: "150px", paddingRight: "80px" }}
+              style={{ width: "150px", paddingRight: "50px" }}
               fontFamily={fontFamily.msr}
             >
-              Pet list
+              Current Capacity
             </Typography>
-            <div
+            {/* <div
               className=""
               style={{ display: "flex", alignItems: "center", gap: 15 }}
             >
@@ -122,25 +171,40 @@ const AboutShelter = () => {
                 fontSize={14}
                 fontWeight={600}
               />
-            </div>
+            </div> */}
+            <Typography
+              variant="body1"
+              color="initial"
+              fontFamily={fontFamily.msr}
+              fontSize={16}
+              fontWeight={600}
+              sx={{ mt: "8px", display: "flex", alignItems: "center" }}
+            >
+              {detail?.approvedPets?.length} / {detail.capacity}
+              <div
+                className="progress-bar"
+                style={{
+                  width: "100px",
+                  height: "5px",
+                  backgroundColor: "#e5e7eb",
+                  marginLeft: "15px",
+                  borderRadius: "10px",
+                }}
+              >
+                <div
+                  className="progress"
+                  style={{
+                    width: detail.approvedPets
+                      ? `${(detail.approvedPets / detail.capacity) * 100}%`
+                      : 0, // Calculate the percentage
+                    backgroundColor: "#103559",
+                    height: "5px",
+                    borderRadius: "10px",
+                  }}
+                ></div>
+              </div>
+            </Typography>
           </div>
-          <Button
-            sx={{
-              bgcolor: "#003459",
-              color: "white",
-              fontWeight: 600,
-              fontSize: 16,
-              fontFamily: fontFamily.msr,
-              textTransform: "none",
-              borderRadius: "20px",
-              width: "100%",
-              py: "12px",
-              marginTop: "40px",
-            }}
-            // onClick={() => handleOpen()}
-          >
-            Edit Information
-          </Button>
         </div>
       </div>
     </div>

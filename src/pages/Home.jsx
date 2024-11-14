@@ -27,7 +27,7 @@ const Home = () => {
             navigate("/");
             break;
           case 3:
-            navigate("/dashboard/manager/pet-list");
+            navigate("/dashboard/manager/pet-management");
             break;
         }
       }

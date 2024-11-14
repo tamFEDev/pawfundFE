@@ -9,9 +9,7 @@ const PetList = ({ mb, amount, petsInShelter }) => {
   useEffect(() => {
     const fetchAllPets = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/api/Users/get-all-approved-pet`
-        );
+        const res = await axios.get(`${BASE_URL}/api/Users/get-all-pet`);
         if (res.status == 200) {
           setAllPets(res.data.data);
         }

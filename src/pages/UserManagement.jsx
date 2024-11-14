@@ -1,24 +1,19 @@
-import { Button, CardMedia, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { BASE_URL, fontFamily, imgURL } from "../constants";
-import PetDetailTag from "../components/PetDetailTag";
-import CustomDivider from "../components/CustomDivider";
-import CustomChip from "../components/CustomChip";
-import AdoptionFormCard from "../components/AdoptionFormCard";
-import MyPetCard from "../components/MyPetCard";
-import ManagePetCard from "../components/MangePetCard";
-import axios from "axios";
+import { BASE_URL, fontFamily } from "../constants";
 import { useGlobalContext } from "../GlobalProvider";
-import PetsIcon from "@mui/icons-material/Pets";
+import axios from "axios";
+import CustomDivider from "../components/CustomDivider";
 
-const ManagePets = () => {
-  const [data, setData] = useState([]);
+const UserManagement = () => {
   const { token } = useGlobalContext();
 
-  const fetchAllPets = async () => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/api/Manager/get-all-pet-by-manager`,
+  const [forms, setForms] = useState(null);
+
+  useEffect(() => {
+    const fetchForms = async () => {
+      const response = await axios.get(
+        `${BASE_URL}/api/Admin/get-pending-approve-requests-list`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -26,19 +21,15 @@ const ManagePets = () => {
           },
         }
       );
-      if (res.status == 200) {
-        setData(res.data.data);
-      }
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllPets();
+      console.log("Response Data:", response.data.data);
+      setForms(response.data.data);
+    };
+    fetchForms();
   }, []);
 
+  useEffect(() => {
+    console.log("Forms State Updated:", forms);
+  }, [forms]);
   return (
     <div
       className=""
@@ -64,7 +55,7 @@ const ManagePets = () => {
         className="card-container"
         style={{ display: "flex", flexWrap: "wrap", gap: 11 }}
       >
-        {data.length == 0 ? (
+        {forms?.length > 0 ? (
           <Typography
             variant="body1"
             color="initial"
@@ -84,7 +75,7 @@ const ManagePets = () => {
               className=""
               style={{ display: "flex", gap: 10, alignItems: "center" }}
             >
-              <PetsIcon />
+              {/* <PetsIcon /> */}
               No pets found
             </div>
             <Typography
@@ -117,31 +108,11 @@ const ManagePets = () => {
             </Typography>
           </Typography>
         ) : (
-          data.map((d, index) => (
-            <ManagePetCard
-              key={index}
-              name={d.petName}
-              isApproved={d.isApproved}
-              petBreed={d.petType}
-              age={d.age}
-              uploadDate={d.createdAt}
-              img={d?.petImages[0]?.imageUrl}
-              petType={d.petCategoryId}
-              petColor={d.color}
-              petSize={d.size}
-              medicalCondition={d.medicalCondition}
-              petGender={d.gender}
-              aboutPet={d.description}
-              userId={d.userId}
-              petId={d.petId}
-              shelterId={d?.shelterId}
-              onRefresh={fetchAllPets}
-            />
-          ))
+          ""
         )}
       </div>
     </div>
   );
 };
 
-export default ManagePets;
+export default UserManagement;

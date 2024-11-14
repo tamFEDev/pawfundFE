@@ -8,9 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { fontFamily, imgURL } from "../constants";
+import React, { useEffect, useState } from "react";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import CustomChip from "./CustomChip";
+import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 const style = {
   position: "absolute",
@@ -33,18 +35,34 @@ const AdoptionFormCard = ({
   introduction,
   havePetBefore,
   declineReason,
+  petId,
+  isApproved,
 }) => {
+  const { user } = useGlobalContext();
   const [open, setOpen] = useState(false);
+  const [pet, setPet] = useState({});
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    const fetchPetDetail = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/Users/get-approved-pet-by-id?id=${petId}`
+      );
+      console.log(res.data.data);
+
+      setPet(res.data.data);
+    };
+    fetchPetDetail();
+  }, []);
   return (
     <Card sx={{ width: "250px", p: "15px", borderRadius: "8px" }}>
       <div className="" style={{ display: "flex", gap: 12 }}>
-        <Avatar src={imgURL.dogo} sx={{ width: "80px", height: "80px" }} />
+        <Avatar src={pet.imageUrl} sx={{ width: "80px", height: "80px" }} />
         <div className="content">
           <Typography
             variant="body1"
@@ -75,22 +93,16 @@ const AdoptionFormCard = ({
               fontSize={12}
               fontWeight={600}
             >
-              {submitDate}
+              N/A
             </Typography>
           </Typography>
           <CustomChip
-            title={status}
+            title={isApproved ? "Approved" : "Pending"}
             fontSize={12}
             fontWeight={600}
-            color={status === "Approved" ? "black" : "white"}
-            bgColor={
-              status === "Rejected"
-                ? "#EF4444"
-                : status === "Pending"
-                ? "black"
-                : null
-            }
-            border={status === "Approved" && "solid 1px black"}
+            color={isApproved ? "black" : "white"}
+            bgColor={isApproved ? "#10B981" : "#EF4444"} // Green for approved, red for pending
+            border={isApproved ? "solid 1px black" : "none"}
           />
         </div>
       </div>
@@ -177,7 +189,7 @@ const AdoptionFormCard = ({
                   placeholder="Enter your full name"
                   name="fullName"
                   label="Full name"
-                  value={"form.fullName"}
+                  value={user.fullname}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -191,7 +203,7 @@ const AdoptionFormCard = ({
                   label="Address"
                   placeholder="Enter your address"
                   name="address"
-                  value={"form.address"}
+                  value={user.address}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -215,7 +227,7 @@ const AdoptionFormCard = ({
                   placeholder="Enter your contact number"
                   name="contactNumber"
                   label="Contact number"
-                  value={"form.contactNumber"}
+                  value={user.phoneNumber}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -229,7 +241,7 @@ const AdoptionFormCard = ({
                   label="Email"
                   placeholder="Enter your email address"
                   name="email"
-                  value={"email"}
+                  value={user.email}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -280,28 +292,6 @@ const AdoptionFormCard = ({
                 multiline
                 fullWidth
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "10px",
-                  },
-                }}
-              />
-              <TextField
-                id=""
-                label={
-                  status === "Rejected" ? "Decline reason" : "Shelter message"
-                }
-                placeholder=""
-                name="reason"
-                value={
-                  status === "Rejected"
-                    ? "Sorry you're not capable"
-                    : "COngrats your application has been approved"
-                }
-                // onChange={(e) => handleChangeForm(e)}
-                multiline
-                fullWidth
-                sx={{
-                  margin: "20px 0",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",
                   },

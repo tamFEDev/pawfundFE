@@ -1,9 +1,10 @@
 import { Card, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CustomDivider from "../components/CustomDivider";
-import { fontFamily, imgURL } from "../constants";
+import { BASE_URL, fontFamily, imgURL } from "../constants";
 import AdoptionFormCard from "../components/AdoptionFormCard";
 import { useGlobalContext } from "../GlobalProvider";
+import axios from "axios";
 
 const data = [
   {
@@ -60,9 +61,43 @@ const data = [
 
 const MyForms = () => {
   const { user, token } = useGlobalContext();
+  const [forms, setForms] = useState([]);
+
   useEffect(() => {
-    console.log({ user: user, token: token });
-  });
+    const resB = {
+      adoptionId: 4,
+      petId: 12,
+      isApproved: false,
+      note: "",
+      petName: "shiberian",
+      selfDescription: "123123123",
+      hasPetExperience: true,
+      reasonForAdopting: "wdqweqwe",
+      reason: null,
+    };
+
+    const fetchForms = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/Adoption/user-adoption-requests`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.status === 200) {
+          console.log(res.data);
+          setForms(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchForms();
+  }, []);
+
   return (
     <Card sx={{ width: "1500px", p: "30px 30px" }}>
       <Typography
@@ -79,17 +114,18 @@ const MyForms = () => {
         className="card-container"
         style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
       >
-        {data.map((d, index) => (
+        {forms.map((d, index) => (
           <AdoptionFormCard
             key={index}
             name={d.petName}
-            submitDate={d.submitDate}
-            petImg={d.petImg}
-            status={d.status}
-            adoptReason={d.adoptReason}
-            introduction={d.introduction}
-            havePetBefore={d.havePetBefore}
-            declineReason={d.declineReason}
+            petId={d.petId}
+            // submitDate={d.submitDate}
+            // petImg={d.petImg}
+            isApproved={d.isApproved}
+            adoptReason={d.reasonForAdopting}
+            introduction={d.selfDescription}
+            havePetBefore={d.hasPetExperience}
+            // declineReason={d.declineReason}
           />
         ))}
       </div>

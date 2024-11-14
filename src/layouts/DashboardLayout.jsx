@@ -15,8 +15,8 @@ const DashboardLayout = () => {
         <div
           className=""
           style={{
-            marginLeft: "210px",
-            marginTop: "100px",
+            marginLeft: user.roleId == 4 ? "210px" : "240px",
+            marginTop: user.roleId == 4 ? "80px" : "100px",
             marginBottom: "30px",
           }}
         >

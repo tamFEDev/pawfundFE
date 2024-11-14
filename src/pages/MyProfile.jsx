@@ -1,7 +1,9 @@
 import {
   Alert,
+  Box,
   Button,
   Card,
+  Modal,
   Snackbar,
   TextField,
   Typography,
@@ -12,6 +14,19 @@ import { BASE_URL, fontFamily } from "../constants";
 
 import { useGlobalContext } from "../GlobalProvider";
 import axios from "axios";
+import CustomChip from "../components/CustomChip";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 650,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "20px",
+};
 
 const MyProfile = () => {
   const { user, token, setUser } = useGlobalContext();
@@ -26,6 +41,27 @@ const MyProfile = () => {
     oldPassword: "",
   });
   const [open, setOpen] = useState(false);
+  const [openVerification, setOpenVerification] = useState(false);
+  const [verification, setVerification] = useState({
+    address: "",
+    phoneNumber: "",
+    occupation: "",
+    idCardNumber: "",
+    petCareCapacity: "",
+    // dateGet: "2024-11-13T16:09:45.009Z",
+    placeGet: "",
+    usualAddress: "",
+  });
+
+  useEffect(() => {
+    if (form.address || form.contactNumber) {
+      setVerification((prev) => ({
+        ...prev,
+        address: form.address,
+        phoneNumber: form.contactNumber,
+      }));
+    }
+  }, [form.address, form.contactNumber]);
 
   useEffect(() => {
     console.log(user);
@@ -87,12 +123,66 @@ const MyProfile = () => {
     setForm({ ...form, [name]: value });
   };
 
+  const handleChangeVerification = (e) => {
+    const { name, value } = e.target;
+    setVerification({ ...verification, [name]: value });
+  };
+
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOpenVerification = () => {
+    setOpenVerification(true);
+  };
+
+  const handleCloseVerification = () => {
+    setOpenVerification(false);
+    setVerification({
+      address: "",
+      phoneNumber: "",
+      occupation: "",
+      idCardNumber: "",
+      petCareCapacity: "",
+      // dateGet: "2024-11-13T16:09:45.009Z",
+      placeGet: "",
+      usualAddress: "",
+    });
+  };
+
+  const handleSubmit = async () => {
+    const body = {
+      address: verification.address,
+      phoneNumber: verification.phoneNumber,
+      occupation: verification.occupation,
+      idCardNumber: verification.idCardNumber,
+      petCareCapacity: verification.petCareCapacity,
+      dateGet: new Date().toISOString(),
+      placeGet: verification.placeGet,
+      usualAddress: verification.usualAddress,
+    };
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/Users/create-request-approve-info-user`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) {
+        handleCloseVerification();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    console.log(verification);
   };
 
   return (
@@ -240,7 +330,7 @@ const MyProfile = () => {
             textTransform: "none",
             borderRadius: "10px",
           }}
-          onClick={() => handleUpdate()}
+          onClick={() => setUpdate(!update)}
         >
           {update ? "Cancel" : "Update Profile"}
         </Button>
@@ -262,16 +352,34 @@ const MyProfile = () => {
           </Button>
         )}
       </div>
-      <Typography
-        variant="body1"
-        color="initial"
-        fontSize={16}
-        fontFamily={fontFamily.msr}
-        fontWeight={600}
-        sx={{ my: "20px" }}
+      <div
+        className=""
+        style={{ display: "flex", alignItems: "center", gap: 20 }}
       >
-        Authentication
-      </Typography>
+        <Typography
+          variant="body1"
+          color="initial"
+          fontSize={16}
+          fontFamily={fontFamily.msr}
+          fontWeight={600}
+          sx={{ my: "20px" }}
+        >
+          Account Verification Status
+        </Typography>
+        <CustomChip
+          title={
+            user.isApprovedUser ? "Verified Account" : "Unverified Account"
+          }
+          color={user.isApprovedUser ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
+          bgColor={
+            user.isApprovedUser
+              ? "rgb(22, 163, 74, 0.1)"
+              : "rgb(217, 119, 6, 0.1)"
+          }
+          fontSize={12}
+          fontWeight={600}
+        />
+      </div>
       {showField && (
         <div
           className="contact-email"
@@ -312,44 +420,232 @@ const MyProfile = () => {
           />
         </div>
       )}
-      <div
-        className=""
-        style={{ display: "flex", gap: 10, marginTop: showField && "15px" }}
-      >
+      <div className="" style={{ display: "flex", gap: 10 }}>
         <Button
           sx={{
-            bgcolor: !showField && "#103559",
-            border: showField && "1px solid #103559",
+            bgcolor: "#103559",
+
             fontSize: "12px",
             fontWeight: 600,
             fontFamily: fontFamily.msr,
-            color: !showField ? "white" : "#103559",
+            color: "white",
             p: "10px 20px",
             textTransform: "none",
             borderRadius: "10px",
           }}
-          onClick={() => handleShow()}
+          onClick={() => handleOpenVerification()}
         >
-          {showField ? "Cancel" : "Change Password"}
+          Request verification
         </Button>
-        {showField && (
-          <Button
-            sx={{
-              bgcolor: "#103559",
-              fontSize: "12px",
-              fontWeight: 600,
-              fontFamily: fontFamily.msr,
-              color: "white",
-              p: "10px 20px",
-              textTransform: "none",
-              borderRadius: "10px",
-            }}
-            onClick={() => handleShow()}
-          >
-            Save password
-          </Button>
-        )}
       </div>
+
+      <Modal
+        open={openVerification}
+        onClose={handleCloseVerification}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography
+            variant="body1"
+            color="initial"
+            fontSize={24}
+            fontWeight={600}
+            fontFamily={fontFamily.msr}
+            textAlign={"left"}
+          >
+            Requets for Account Verification
+          </Typography>
+          <Typography
+            variant="body1"
+            fontFamily={fontFamily.msr}
+            color="#667479"
+            fontSize={14}
+            textAlign={"left"}
+          >
+            Please provide your necessary credential information to expedite the
+            adoption process.
+          </Typography>
+          <div className="form" style={{ marginTop: "30px" }}>
+            <div
+              className="name-address"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+              }}
+            >
+              <TextField
+                id=""
+                placeholder="Enter your address"
+                name="address"
+                label="Address"
+                value={verification.address}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+              <TextField
+                id=""
+                label="Contact number"
+                placeholder="Enter your contact number"
+                name="address"
+                value={verification.phoneNumber}
+                // onChange={(e) => handleChangeForm(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+            </div>
+            <div
+              className="contact-email"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                margin: "20px 0",
+              }}
+            >
+              <TextField
+                id=""
+                placeholder="How many are there in your family"
+                name="occupation"
+                label="Family Occupation"
+                value={verification.occupation}
+                onChange={(e) => handleChangeVerification(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+              <TextField
+                id=""
+                label="Pet Care Capacity"
+                placeholder="Pet Care Capacity"
+                name="petCareCapacity"
+                value={verification.petCareCapacity}
+                onChange={(e) => handleChangeVerification(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+            </div>
+            <div
+              className="contact-email"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                margin: "20px 0",
+              }}
+            >
+              <TextField
+                id=""
+                placeholder="Enter your ID Number"
+                name="idCardNumber"
+                label="ID Number"
+                value={verification.idCardNumber}
+                onChange={(e) => handleChangeVerification(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+              <TextField
+                id=""
+                placeholder="Enter provided ID place"
+                name="placeGet"
+                label="Provided location"
+                value={verification.placeGet}
+                onChange={(e) => handleChangeVerification(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+            </div>
+            <div
+              className="contact-email"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                margin: "20px 0",
+              }}
+            >
+              <TextField
+                id=""
+                label="Enter your current address"
+                placeholder="Current Address"
+                name="usualAddress"
+                value={verification.usualAddress}
+                onChange={(e) => handleChangeVerification(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                }}
+              />
+            </div>
+          </div>
+          <div
+            className="button"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "30px",
+              gap: 15,
+            }}
+          >
+            <Button
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                color: "#103559",
+                fontSize: "16px",
+                borderRadius: "10px",
+                border: "1px solid #103559",
+                fontFamily: fontFamily.msr,
+                p: "12px 20px",
+              }}
+              onClick={() => handleCloseVerification()}
+            >
+              Cancel
+            </Button>
+            <Button
+              sx={{
+                textTransform: "none",
+                bgcolor: "#103559",
+                fontSize: "16px",
+                borderRadius: "10px",
+                fontFamily: fontFamily.msr,
+                p: "12px 20px",
+                color: "white",
+              }}
+              // disabled={!isFormComplete()}
+              onClick={() => handleSubmit()}
+            >
+              Submit request
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </Card>
   );
 };

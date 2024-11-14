@@ -108,7 +108,7 @@ const Login = () => {
             navigate("/");
             break;
           case 3:
-            navigate("/dashboard/manager/pet-list");
+            navigate("/dashboard/manager/pet-management");
             break;
         }
       }, 1000); // Delay the navigation by 2 seconds
@@ -116,6 +116,20 @@ const Login = () => {
       return () => clearTimeout(timer); // Clear timeout on component unmount
     }
   }, [user, isLogged, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleLogin();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [form]);
 
   return (
     <div style={{}}>

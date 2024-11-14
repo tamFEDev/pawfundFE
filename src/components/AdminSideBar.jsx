@@ -34,13 +34,13 @@ const staffPages = [
 
 const managerPages = [
   {
-    name: "Pet list",
-    url: "/dashboard/manager/pet-list",
+    name: "Pet Management",
+    url: "/dashboard/manager/pet-management",
     icon: <PetsIcon />,
   },
   {
-    name: "Events",
-    url: "/dashboard/manager/pet-list",
+    name: "User Management",
+    url: "/dashboard/manager/user-management",
     icon: <EventIcon />,
   },
 ];
@@ -62,7 +62,7 @@ const AdminSideBar = () => {
         display: "inline-block",
         height: "100vh",
         padding: "40px 20px",
-        width: user.roleId === 4 ? "180px" : "160px",
+        width: user.roleId === 4 ? "180px" : "190px",
         marginTop: "80px",
         position: "fixed",
       }}
@@ -89,7 +89,7 @@ const AdminSideBar = () => {
                 fontSize={16}
                 fontWeight={600}
                 fontFamily={fontFamily.msr}
-                sx={{ display: "flex", gap: 2, width: "200px" }}
+                sx={{ display: "flex", gap: 1, width: "200px" }}
                 // textAlign={"center"}
               >
                 {p.icon} {p.name}

@@ -23,6 +23,8 @@ import AdoptionForms from "./pages/AdoptionForms.jsx";
 import MyPet from "./pages/MyPet.jsx";
 import ManagePets from "./pages/ManagePets.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import PetManagement from "./pages/PetManagement.jsx";
+import UserManagement from "./pages/UserManagement.jsx";
 
 const router = createBrowserRouter([
   {
@@ -152,8 +154,12 @@ const router = createBrowserRouter([
         element: <AboutShelter />,
       },
       {
-        path: "/dashboard/manager/pet-list",
+        path: "/dashboard/manager/pet-management",
         element: <ManagePets />,
+      },
+      {
+        path: "/dashboard/manager/user-management",
+        element: <UserManagement />,
       },
     ],
   },

@@ -14,23 +14,17 @@ import {
 import { fontFamily } from "../constants";
 import CustomDivider from "../components/CustomDivider";
 import { useGlobalContext } from "../GlobalProvider";
+import CustomChip from "../components/CustomChip";
 
 const tabs = [
   {
     name: "My Profile",
     url: "/account/profile",
   },
-  {
-    name: "My Pets",
-    url: "/account/my-pets",
-  },
+
   {
     name: "My Adoption Forms",
     url: "/account/my-forms",
-  },
-  {
-    name: "Upload Pets",
-    url: "/account/upload-pet",
   },
 ];
 
@@ -92,24 +86,26 @@ const AccountLayout = () => {
       >
         <Card sx={{ width: "280px", p: "30px 30px", height: "350px" }}>
           <div className="">
-            {tabs.map((t, index) => (
-              <div
-                onClick={() => handleNavigate(t.name, t.url)}
-                key={index}
-                style={{ cursor: "pointer" }}
-              >
-                <Typography
-                  variant="body1"
-                  color="initial"
+            <div className="" style={{}}>
+              {tabs.map((t, index) => (
+                <div
+                  onClick={() => handleNavigate(t.name, t.url)}
                   key={index}
-                  fontSize={18}
-                  fontFamily={fontFamily.msr}
+                  style={{ cursor: "pointer" }}
                 >
-                  {t.name}
-                </Typography>
-                <CustomDivider padding={"20px 0"} />
-              </div>
-            ))}
+                  <Typography
+                    variant="body1"
+                    color="initial"
+                    key={index}
+                    fontSize={18}
+                    fontFamily={fontFamily.msr}
+                  >
+                    {t.name}
+                  </Typography>
+                  <CustomDivider padding={"20px 0"} />
+                </div>
+              ))}
+            </div>
             <Button
               onClick={() => handleLogout()}
               sx={{ marginTop: "20px", textTransform: "none" }}

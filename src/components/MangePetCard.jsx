@@ -58,6 +58,8 @@ const ManagePetCard = ({
   petId,
   onRefresh,
   shelterId,
+  isAdopted,
+  petDesc,
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -76,44 +78,17 @@ const ManagePetCard = ({
     address: null,
   });
 
-  const handleOpen = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/Shelter/GetAllShelters`);
-      if (res.status == 200) {
-        setShelters(res.data);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    setOpen(true);
-  };
-
   const handleClose = () => {
     setOpen(false);
-    setSelectedShelter(null);
-    setConfirmedShelter({
-      shelterId: null,
-      shelterName: null,
-      shelterLocation: null,
-    });
   };
 
-  const handleCancelPick = () => {
-    handleCloseShelter();
-    setSelectedShelter(null);
-  };
-
-  const handleOpenShelters = () => {
-    setOpenShelters(true);
-  };
-
-  const handleCloseShelter = () => {
-    setOpenShelters(false);
+  const handleOpen = () => {
+    setOpen(true);
   };
 
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(
+      await axios.delete(
         `${BASE_URL}/api/Manager/delete-pet-by-manager/${petId}`,
         {
           headers: {
@@ -122,54 +97,12 @@ const ManagePetCard = ({
           },
         }
       );
-      if (res.status == 200) {
-        onRefresh();
-        setOpen(false);
-      }
+      onRefresh();
+      handleClose();
     } catch (err) {
       console.log(err);
     }
   };
-
-  const handleSavePet = async () => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/api/Manager/approve-pet/${petId}/${confirmedShelter.shelterId}`,
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.status == 200) {
-        console.log("pet has been moved to shelter");
-        onRefresh();
-        handleClose();
-      }
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUserByID = async () => {
-      try {
-        const res = await axios.get(
-          `${BASE_URL}/api/Admin/GetUserById?id=${userId}`
-        );
-        if (res.status === 200) {
-          setUser(res.data);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchUserByID();
-  }, [userId]);
 
   useEffect(() => {
     const fetchShelterDetail = async () => {
@@ -196,25 +129,6 @@ const ManagePetCard = ({
     });
   };
 
-  const handleSelectShelter = (shelter) => {
-    console.log(shelter);
-    setSelectedShelter(shelter);
-  };
-
-  const handleConfirmShelter = (shelter) => {
-    setConfirmedShelter({
-      shelterId: shelter.shelterId,
-      shelterName: shelter.shelterName,
-      shelterLocation: shelter.shelterLocation,
-    });
-    console.log(confirmedShelter);
-    handleCloseShelter();
-  };
-
-  useEffect(() => {
-    console.log(token);
-  }, []);
-
   return (
     <Card sx={{ p: "15px", width: "270px", borderRadius: "20px" }}>
       <CardMedia
@@ -224,10 +138,10 @@ const ManagePetCard = ({
       />
       <div className="card-content" style={{ marginTop: "10px" }}>
         <CustomChip
-          title={isApproved ? "Approved" : "Awaiting shelter"}
-          color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
+          title={isAdopted ? "Adopted" : "In Shelter"}
+          color={isAdopted ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
           bgColor={
-            isApproved ? "rgb(22, 163, 74, 0.1)" : "rgb(217, 119, 6, 0.1)"
+            isAdopted ? "rgb(22, 163, 74, 0.1)" : "rgb(217, 119, 6, 0.1)"
           }
           fontSize={12}
           fontWeight={600}
@@ -363,10 +277,10 @@ const ManagePetCard = ({
             >
               <div className="" style={{ display: "flex", gap: 10 }}>
                 <CustomChip
-                  title={isApproved ? "Approved" : "Awaiting shelter"}
-                  color={isApproved ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
+                  title={isAdopted ? "Adopted" : "In Shelter"}
+                  color={isAdopted ? "rgb(22, 163, 74)" : "rgb(217, 119, 6)"}
                   bgColor={
-                    isApproved
+                    isAdopted
                       ? "rgb(22, 163, 74, 0.1)"
                       : "rgb(217, 119, 6, 0.1)"
                   }
@@ -401,9 +315,10 @@ const ManagePetCard = ({
                 //   textAlign={"center"}
                 sx={{ display: "flex", alignItems: "center", mt: "10px" }}
               >
-                {isApproved
+                Hello, My name is {name}
+                {/* {isApproved
                   ? `${name} has found a Shelter`
-                  : `Finding Shelter for ${name}`}
+                  : `Finding Shelter for ${name}`} */}
               </Typography>
 
               <Typography
@@ -413,9 +328,7 @@ const ManagePetCard = ({
                 fontSize={14}
                 //   textAlign={"center"}
               >
-                {isApproved
-                  ? `Staff will be notified about ${name}`
-                  : "Please review this form to ensure accurate shelter placement."}
+                Anh this is my detailed information
               </Typography>
             </div>
 
@@ -425,13 +338,13 @@ const ManagePetCard = ({
           <div
             className="modal-content"
             style={{
-              height: (confirmedShelter.shelterId || shelter.name) && "480px",
-              overflowY:
-                (confirmedShelter.shelterId || shelter.name) && "scroll",
+              // height: (confirmedShelter.shelterId || shelter.name) && "480px",
+              // overflowY:
+              //   (confirmedShelter.shelterId || shelter.name) && "scroll",
               paddingRight: "10px",
             }}
           >
-            <div className="user-info" style={{ marginBottom: "15px" }}>
+            {/* <div className="user-info" style={{ marginBottom: "15px" }}>
               <Typography
                 variant="body1"
                 color="initial"
@@ -538,7 +451,7 @@ const ManagePetCard = ({
                   }
                 />
               </div>
-            </div>
+            </div> */}
             <div className="pet-info">
               <Typography
                 variant="body1"
@@ -577,7 +490,7 @@ const ManagePetCard = ({
                   label="Pet type"
                   placeholder="Enter type of pet"
                   name="petType"
-                  value={petType}
+                  value={petType == 1 ? "dog" : "cat"}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -692,7 +605,24 @@ const ManagePetCard = ({
                   }}
                 />
               </div>
-              {isApproved ? (
+
+              <TextField
+                id=""
+                label="Pet description"
+                placeholder="Enter type of pet"
+                name="gender"
+                value={petDesc}
+                //   onChange={(e) => handleChangeForm(e)}
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "10px",
+                  },
+                  mt: "20px",
+                }}
+              />
+
+              {/* {isApproved ? (
                 <div className="" style={{ display: "flex", gap: 10 }}>
                   <TextField
                     id=""
@@ -756,7 +686,7 @@ const ManagePetCard = ({
                     />
                   </div>
                 )
-              )}
+              )} */}
             </div>
           </div>
           <div
@@ -781,206 +711,6 @@ const ManagePetCard = ({
               onClick={() => handleDelete()}
             >
               Delete
-            </Button>
-            {!isApproved && (
-              <div className="" style={{ display: "flex", gap: 15 }}>
-                <Button
-                  sx={{
-                    textTransform: "none",
-                    color: "#103559",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    fontFamily: fontFamily.msr,
-                    p: "12px 20px",
-                    border: "1px solid #103559",
-                  }}
-                  //   disabled={!isFormComplete()}
-                  onClick={() => handleOpenShelters()}
-                >
-                  Move to Shelter
-                </Button>
-                <Button
-                  sx={{
-                    textTransform: "none",
-                    bgcolor: confirmedShelter.shelterId && "#103559",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    fontFamily: fontFamily.msr,
-                    p: "12px 20px",
-                    color: "white",
-                  }}
-                  disabled={confirmedShelter.shelterId ? false : true}
-                  onClick={() => handleSavePet()}
-                >
-                  Save Pet
-                </Button>
-              </div>
-            )}
-          </div>
-        </Box>
-      </Modal>
-      <Modal
-        open={openShelters}
-        onClose={handleCloseShelter}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={shelterModal}>
-          <div
-            className=""
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="body1"
-              color="initial"
-              fontSize={24}
-              fontWeight={600}
-              fontFamily={fontFamily.msr}
-            >
-              Pick a shelter for {name}
-            </Typography>
-
-            <Typography
-              variant="body1"
-              fontFamily={fontFamily.msr}
-              color="#667479"
-              fontSize={14}
-            >
-              {isApproved
-                ? `Staff will be notified about ${name}`
-                : "Please review this form to ensure accurate shelter placement."}
-            </Typography>
-          </div>
-          <div
-            className=""
-            style={{
-              overflowY: "scroll",
-              height: "480px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-              marginTop: "20px",
-              padding: "10px 10px",
-              cursor: "pointer",
-            }}
-          >
-            {shelters.map((s, index) => (
-              <div
-                className=""
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "10px",
-                  border: selectedShelter === s && "1px solid #103559",
-                  borderRadius: "10px",
-                }}
-                onClick={() => handleSelectShelter(s)}
-              >
-                <CardMedia
-                  component={"img"}
-                  src={s.shelterImage}
-                  sx={{ width: "100px", height: "100px", borderRadius: "10px" }}
-                />
-                <div className="">
-                  <Typography
-                    variant="body1"
-                    color="initial"
-                    key={index}
-                    fontFamily={fontFamily.msr}
-                    fontWeight={600}
-                    fontSize={18}
-                  >
-                    {s.shelterName}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="#667479"
-                    fontSize={16}
-                    fontFamily={fontFamily.msr}
-                    sx={{ mt: "3px" }}
-                  >
-                    {s.shelterLocation}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="initial"
-                    fontFamily={fontFamily.msr}
-                    fontSize={16}
-                    sx={{ mt: "8px", display: "flex", alignItems: "center" }}
-                  >
-                    Capacity: {s.approvedPets.length}/{s.capacity}
-                    <div
-                      className="progress-bar"
-                      style={{
-                        width: "100px",
-                        height: "5px",
-                        backgroundColor: "#e5e7eb",
-                        marginLeft: "15px",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <div
-                        className="progress"
-                        style={{
-                          width: `${
-                            (s.approvedPets.length / s.capacity) * 100
-                          }%`, // Calculate the percentage
-                          backgroundColor: "#103559",
-                          height: "5px",
-                          borderRadius: "10px",
-                        }}
-                      ></div>
-                    </div>
-                  </Typography>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div
-            className=""
-            style={{
-              display: "flex",
-              gap: 15,
-              marginTop: "20px",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              sx={{
-                textTransform: "none",
-                fontWeight: 600,
-                color: "#103559",
-                fontSize: "16px",
-                borderRadius: "10px",
-                border: "1px solid #103559",
-                fontFamily: fontFamily.msr,
-                p: "12px 20px",
-              }}
-              onClick={() => handleCancelPick()}
-            >
-              Cancel
-            </Button>
-            <Button
-              sx={{
-                textTransform: "none",
-                bgcolor: selectedShelter ? "#103559" : "",
-                fontSize: "16px",
-                borderRadius: "10px",
-                fontFamily: fontFamily.msr,
-                p: "12px 20px",
-                color: "white",
-              }}
-              disabled={selectedShelter === null}
-              onClick={() => handleConfirmShelter(selectedShelter)}
-            >
-              Confirm
             </Button>
           </div>
         </Box>

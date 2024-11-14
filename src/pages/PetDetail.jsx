@@ -21,6 +21,7 @@ import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 // const petDetail = {
 //   name: "Shibe milo",
@@ -40,7 +41,7 @@ import axios from "axios";
 const adoptionStep = [
   "1. Fill out our adoption application form",
   "2. Our team will review your application",
-  "3. We'll schedule a meet-and-greet with Buddy",
+  "3. We'll schedule a meet-and-greet with the pet",
   "4. If it's a match, we'll finalize the adoption process",
 ];
 
@@ -57,6 +58,7 @@ const style = {
 };
 
 const PetDetail = () => {
+  const { token } = useGlobalContext();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -170,6 +172,36 @@ const PetDetail = () => {
       reason.trim() !== "" &&
       isAdoptPetBefore !== null
     );
+  };
+
+  const handleSubmit = async () => {
+    const body = {
+      fullName: form.fullName,
+      address: form.address,
+      phoneNumber: form.contactNumber,
+      email: form.email,
+      selfDescription: form.personalDesc,
+      hasPetExperience: form.isAdoptPetBefore,
+      reasonForAdopting: form.reason,
+      note: "",
+    };
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/Adoption/adoption-request/${id}`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        handleCloseForm();
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -333,7 +365,7 @@ const PetDetail = () => {
               fontSize={24}
               fontWeight={600}
             >
-              Adopt {petDetail.name}
+              Adopt {petDetail.petName}
             </Typography>
             <Typography
               id="modal-modal-description"
@@ -342,8 +374,8 @@ const PetDetail = () => {
               color="#667479"
               fontSize={14}
             >
-              You&apos;re one step closer to giving {petDetail.name} a forever
-              home! Here&apos;s what happens next:
+              You&apos;re one step closer to giving {petDetail.petName} a
+              forever home! Here&apos;s what happens next:
             </Typography>
             <div
               className="step"
@@ -597,7 +629,7 @@ const PetDetail = () => {
                   color: "white",
                 }}
                 disabled={!isFormComplete()}
-                onClick={() => handleContinueForm()}
+                onClick={() => handleSubmit()}
               >
                 Submit adoption form
               </Button>
