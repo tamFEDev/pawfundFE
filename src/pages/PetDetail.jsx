@@ -180,6 +180,7 @@ const PetDetail = () => {
       hasPetExperience: form.isAdoptPetBefore,
       reasonForAdopting: form.reason,
       note: "",
+      createDate: new Date().toISOString(),
     };
     try {
       const res = await axios.post(
