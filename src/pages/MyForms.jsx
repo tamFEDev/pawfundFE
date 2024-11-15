@@ -99,7 +99,7 @@ const MyForms = () => {
   }, []);
 
   return (
-    <Card sx={{ width: "1500px", p: "30px 30px" }}>
+    <Card sx={{ width: "1600px", p: "30px 30px" }}>
       <Typography
         variant="body1"
         color="initial"
@@ -112,7 +112,7 @@ const MyForms = () => {
       <CustomDivider padding={"20px 0"} />
       <div
         className="card-container"
-        style={{ display: "flex", flexWrap: "wrap", gap: 5 }}
+        style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
       >
         {forms.map((d, index) => (
           <AdoptionFormCard

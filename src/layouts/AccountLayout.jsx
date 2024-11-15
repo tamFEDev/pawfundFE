@@ -79,12 +79,12 @@ const AccountLayout = () => {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "0 100px",
+          padding: "0 50px",
           marginTop: "50px",
-          gap: 50,
+          gap: 20,
         }}
       >
-        <Card sx={{ width: "280px", p: "30px 30px", height: "350px" }}>
+        <Card sx={{ width: "290px", p: "30px 30px", height: "350px" }}>
           <div className="">
             <div className="" style={{}}>
               {tabs.map((t, index) => (
