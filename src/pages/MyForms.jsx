@@ -112,7 +112,7 @@ const MyForms = () => {
       <CustomDivider padding={"20px 0"} />
       <div
         className="card-container"
-        style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
+        style={{ display: "flex", flexWrap: "wrap", gap: 5 }}
       >
         {forms.map((d, index) => (
           <AdoptionFormCard
@@ -126,6 +126,7 @@ const MyForms = () => {
             introduction={d.selfDescription}
             havePetBefore={d.hasPetExperience}
             // declineReason={d.declineReason}
+            createDate={d.createDate}
           />
         ))}
       </div>

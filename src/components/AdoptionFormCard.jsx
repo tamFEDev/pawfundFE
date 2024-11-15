@@ -38,6 +38,7 @@ const AdoptionFormCard = ({
   petId,
   isApproved,
   userId,
+  createDate,
 }) => {
   const { user } = useGlobalContext();
   const [open, setOpen] = useState(false);
@@ -61,8 +62,17 @@ const AdoptionFormCard = ({
     fetchPetDetail();
   }, []);
 
+  const formatReadableDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
-    <Card sx={{ width: "250px", p: "15px", borderRadius: "8px" }}>
+    <Card sx={{ width: "300px", p: "15px", borderRadius: "8px" }}>
       <div className="" style={{ display: "flex", gap: 12 }}>
         <Avatar src={pet.imageUrl} sx={{ width: "80px", height: "80px" }} />
         <div className="content">
@@ -95,7 +105,7 @@ const AdoptionFormCard = ({
               fontSize={12}
               fontWeight={600}
             >
-              N/A
+              {formatReadableDate(createDate)}
             </Typography>
           </Typography>
           <CustomChip
