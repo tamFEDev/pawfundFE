@@ -264,7 +264,7 @@ const Login = () => {
                 sx={{
                   marginTop: "30px",
                   borderRadius: "10px",
-                  backgroundColor: "#FFAD6B",
+                  backgroundColor: !loading && "#FFAD6B",
                   color: "white",
                   fontWeight: 600,
                   width: "100%",
@@ -273,6 +273,7 @@ const Login = () => {
                   fontSize: "16px",
                   fontFamily: fontFamily.msr,
                 }}
+                disabled={loading}
                 onClick={() => handleLogin()}
               >
                 Login

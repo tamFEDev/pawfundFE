@@ -9,6 +9,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Header from "../components/Header";
 import { BASE_URL, fontFamily, imgURL } from "../constants";
@@ -22,21 +24,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
-
-// const petDetail = {
-//   name: "Shibe milo",
-//   animal: "dog",
-//   breed: "Shiba inu",
-//   age: "2 years old",
-//   medicalCondition: "Vaccinated",
-//   publishDate: "12-Oct-2022",
-//   size: "small",
-//   color: "black",
-//   shelterLocation: "Hanoi, Vietnam",
-//   shelterName: "Trại thú cưng ABC - TP. Hồ Chí Minh",
-//   gender: "Male",
-//   desc: "Buddy is a friendly and energetic Golden Retriever who loves to play fetch and go for long walks. Hes great with kids and other dogs, making him the perfect addition to an active family. Buddy is fully vaccinated and house-trained.",
-// };
 
 const adoptionStep = [
   "1. Fill out our adoption application form",
@@ -58,20 +45,33 @@ const style = {
 };
 
 const PetDetail = () => {
-  const { token } = useGlobalContext();
+  const { user, token, loading, setLoading } = useGlobalContext();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [form, setForm] = useState({
-    fullName: "",
-    address: "",
-    contactNumber: "",
-    email: "",
+    fullName: user.fullname,
+    address: user.address,
+    contactNumber: user.phoneNumber,
+    email: user.email,
     personalDesc: "",
     isAdoptPetBefore: null,
     reason: "",
   });
   const [petDetail, setPetDetail] = useState({});
+  const [alert, setAlert] = useState(false);
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const handleCloseAlert = () => {
+    setAlert(false);
+  };
+
+  const handleOpenAlert = () => {
+    setAlert(true);
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,7 +119,17 @@ const PetDetail = () => {
     fetchShelterDetail();
   }, [petDetail.shelterId, id]); // Trigger only when shelterId is available
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    if (!user.phoneNumber || !user.address) {
+      setInfo({
+        isError: true,
+        message: "Please update contact information in 'My Profile' page",
+      });
+      handleOpenAlert();
+      return;
+    }
+    setOpen(true);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -135,15 +145,12 @@ const PetDetail = () => {
   };
 
   const handleCloseForm = () => {
-    setForm({
-      fullName: "",
-      address: "",
-      contactNumber: "",
-      email: "",
+    setForm((prevForm) => ({
+      ...prevForm,
       personalDesc: "",
       isAdoptPetBefore: null,
       reason: "",
-    });
+    }));
     setOpenForm(false);
   };
 
@@ -153,21 +160,9 @@ const PetDetail = () => {
   };
 
   const isFormComplete = () => {
-    const {
-      fullName,
-      address,
-      contactNumber,
-      email,
-      personalDesc,
-      isAdoptPetBefore,
-      reason,
-    } = form;
+    const { personalDesc, isAdoptPetBefore, reason } = form;
 
     return (
-      fullName.trim() !== "" &&
-      address.trim() !== "" &&
-      contactNumber.trim() !== "" &&
-      email.trim() !== "" &&
       personalDesc.trim() !== "" &&
       reason.trim() !== "" &&
       isAdoptPetBefore !== null
@@ -175,6 +170,7 @@ const PetDetail = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const body = {
       fullName: form.fullName,
       address: form.address,
@@ -197,15 +193,41 @@ const PetDetail = () => {
         }
       );
       if (res.status === 200) {
+        setInfo({
+          isError: false,
+          message: "Adoption request submitted successfully",
+        });
+        handleOpenAlert();
         handleCloseForm();
       }
     } catch (err) {
       console.log(err);
+      setInfo({
+        isError: true,
+        message: "There has been an error, please try again",
+      });
+      handleOpenAlert();
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
+      <Snackbar
+        open={alert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={info.isError ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {info.message}
+        </Alert>
+      </Snackbar>
       <Header />
       <div
         className=""
@@ -318,7 +340,7 @@ const PetDetail = () => {
               }}
               onClick={() => handleOpen()}
             >
-              Adopt {petDetail.name} now
+              Adopt {petDetail.petName} now
             </Button>
           </div>
         </div>
@@ -610,10 +632,11 @@ const PetDetail = () => {
                   color: "#103559",
                   fontSize: "16px",
                   borderRadius: "10px",
-                  border: "1px solid #103559",
+                  border: !loading && "1px solid #103559",
                   fontFamily: fontFamily.msr,
                   p: "12px 20px",
                 }}
+                disabled={loading}
                 onClick={() => handleCloseForm()}
               >
                 Cancel
@@ -621,17 +644,17 @@ const PetDetail = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  bgcolor: isFormComplete() ? "#103559" : "",
+                  bgcolor: !isFormComplete() || loading ? "" : "#103559",
                   fontSize: "16px",
                   borderRadius: "10px",
                   fontFamily: fontFamily.msr,
                   p: "12px 20px",
                   color: "white",
                 }}
-                disabled={!isFormComplete()}
+                disabled={!isFormComplete() || loading}
                 onClick={() => handleSubmit()}
               >
-                Submit adoption form
+                {loading ? "Saving..." : "Submit adoption form"}
               </Button>
             </div>
           </Box>

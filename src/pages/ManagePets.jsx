@@ -6,7 +6,7 @@ import CustomDivider from "../components/CustomDivider";
 import CustomChip from "../components/CustomChip";
 import AdoptionFormCard from "../components/AdoptionFormCard";
 import MyPetCard from "../components/MyPetCard";
-import ManagePetCard from "../components/MangePetCard";
+import ManagePetCard from "../components/ManagePetCard";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
 import PetsIcon from "@mui/icons-material/Pets";

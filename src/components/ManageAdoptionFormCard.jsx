@@ -26,7 +26,7 @@ const style = {
   borderRadius: "20px",
 };
 
-const AdoptionFormCard = ({
+const ManageAdoptionFormCard = ({
   name,
   submitDate,
   petImg,
@@ -38,10 +38,13 @@ const AdoptionFormCard = ({
   petId,
   isApproved,
   userId,
+  adoptionId,
+  onRefresh,
 }) => {
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   const [open, setOpen] = useState(false);
   const [pet, setPet] = useState({});
+  const [userInfo, setUserInfo] = useState({});
   const handleOpen = () => {
     setOpen(true);
   };
@@ -60,6 +63,44 @@ const AdoptionFormCard = ({
     };
     fetchPetDetail();
   }, []);
+
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      const res = await axios.get(
+        `${BASE_URL}/api/Admin/GetUserById?id=${userId}`
+      );
+      console.log(res.data.data);
+
+      setUserInfo(res.data);
+    };
+    fetchUserDetail();
+  }, []);
+
+  const handleApprove = async () => {
+    const body = {
+      isApproved: true,
+      reason: "approved",
+    };
+    try {
+      const res = await axios.put(
+        `${BASE_URL}/api/staff/approve-adoption-request/${adoptionId}`,
+        { body },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) {
+        console.log("approve successfully");
+        handleClose();
+        onRefresh();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Card sx={{ width: "250px", p: "15px", borderRadius: "8px" }}>
@@ -168,15 +209,6 @@ const AdoptionFormCard = ({
               </Typography>
             </div>
 
-            <Typography
-              variant="body1"
-              fontFamily={fontFamily.msr}
-              color="#667479"
-              fontSize={14}
-              textAlign={"center"}
-            >
-              Once it has been sent. You cannot edit this form
-            </Typography>
             <div className="form" style={{ marginTop: "30px" }}>
               <div
                 className="name-address"
@@ -191,7 +223,7 @@ const AdoptionFormCard = ({
                   placeholder="Enter your full name"
                   name="fullName"
                   label="Full name"
-                  value={user.fullname}
+                  value={userInfo.fullname}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -205,7 +237,7 @@ const AdoptionFormCard = ({
                   label="Address"
                   placeholder="Enter your address"
                   name="address"
-                  value={user.address}
+                  value={userInfo.address}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -229,7 +261,7 @@ const AdoptionFormCard = ({
                   placeholder="Enter your contact number"
                   name="contactNumber"
                   label="Contact number"
-                  value={user.phoneNumber}
+                  value={userInfo.phoneNumber}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -243,7 +275,7 @@ const AdoptionFormCard = ({
                   label="Email"
                   placeholder="Enter your email address"
                   name="email"
-                  value={user.email}
+                  value={userInfo.email}
                   //   onChange={(e) => handleChangeForm(e)}
                   fullWidth
                   sx={{
@@ -336,8 +368,9 @@ const AdoptionFormCard = ({
                   fontFamily: fontFamily.msr,
                   p: "12px 30px",
                 }}
+                onClick={() => handleApprove()}
               >
-                View pet
+                Approve form
               </Button>
             </div>
           </Box>
@@ -347,4 +380,4 @@ const AdoptionFormCard = ({
   );
 };
 
-export default AdoptionFormCard;
+export default ManageAdoptionFormCard;

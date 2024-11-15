@@ -25,11 +25,6 @@ const staffPages = [
     url: "/dashboard/staff/adoption-forms",
     icon: <EditNoteIcon />,
   },
-  {
-    name: "Events",
-    url: "/dashboard/staff/events",
-    icon: <EventIcon />,
-  },
 ];
 
 const managerPages = [

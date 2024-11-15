@@ -29,8 +29,7 @@ const style = {
 };
 
 const MyProfile = () => {
-  const { user, token, setUser } = useGlobalContext();
-  const [showField, setShowField] = useState(false);
+  const { user, token, setUser, loading, setLoading } = useGlobalContext();
   const [update, setUpdate] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
@@ -81,7 +80,8 @@ const MyProfile = () => {
   }, [user]);
 
   const handleUpdate = async () => {
-    setUpdate(!update);
+    setLoading(true);
+
     if (update) {
       try {
         const body = {
@@ -107,15 +107,14 @@ const MyProfile = () => {
           localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage with new user data
           console.log(updatedUser);
           handleOpen();
+          setUpdate(false);
         }
       } catch (err) {
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     }
-  };
-
-  const handleShow = () => {
-    setShowField(!showField);
   };
 
   const handleChangeForm = (e) => {
@@ -317,27 +316,32 @@ const MyProfile = () => {
           }}
         />
       </div>
-      <div className="" style={{ display: "flex", gap: 10, marginTop: "15px" }}>
-        <Button
-          sx={{
-            bgcolor: !update && "#103559",
-            border: update && "1px solid #103559",
-            fontSize: "12px",
-            fontWeight: 600,
-            fontFamily: fontFamily.msr,
-            color: !update ? "white" : "#103559",
-            p: "10px 20px",
-            textTransform: "none",
-            borderRadius: "10px",
-          }}
-          onClick={() => setUpdate(!update)}
+      {update ? (
+        <div
+          className="button"
+          style={{ display: "flex", gap: 10, marginTop: "15px" }}
         >
-          {update ? "Cancel" : "Update Profile"}
-        </Button>
-        {update && (
           <Button
             sx={{
-              bgcolor: "#103559",
+              // bgcolor: !update && "#103559",
+              border: !loading && "1px solid #103559",
+              fontSize: "12px",
+              fontWeight: 600,
+              fontFamily: fontFamily.msr,
+              color: !update ? "white" : "#103559",
+              p: "10px 20px",
+              textTransform: "none",
+              borderRadius: "10px",
+            }}
+            disabled={loading}
+            onClick={() => setUpdate(!update)}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            sx={{
+              bgcolor: !loading && "#103559",
               fontSize: "12px",
               fontWeight: 600,
               fontFamily: fontFamily.msr,
@@ -346,12 +350,32 @@ const MyProfile = () => {
               textTransform: "none",
               borderRadius: "10px",
             }}
+            disabled={loading}
             onClick={() => handleUpdate()}
           >
             Save Profile
           </Button>
-        )}
-      </div>
+        </div>
+      ) : (
+        <Button
+          sx={{
+            bgcolor: "#103559",
+            border: "1px solid #103559",
+            fontSize: "12px",
+            fontWeight: 600,
+            fontFamily: fontFamily.msr,
+            color: "white",
+            p: "10px 20px",
+            textTransform: "none",
+            borderRadius: "10px",
+            marginTop: "15px",
+          }}
+          onClick={() => setUpdate(!update)}
+        >
+          Update Profile
+        </Button>
+      )}
+
       <div
         className=""
         style={{ display: "flex", alignItems: "center", gap: 20 }}
@@ -380,46 +404,7 @@ const MyProfile = () => {
           fontWeight={600}
         />
       </div>
-      {showField && (
-        <div
-          className="contact-email"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 10,
-            marginTop: "20px",
-          }}
-        >
-          <TextField
-            id=""
-            placeholder="Enter your old password"
-            name="oldPassword"
-            label="Old Password"
-            value={form.oldPassword}
-            //   onChange={(e) => handleChangeForm(e)}
-            fullWidth
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
-          />
-          <TextField
-            id=""
-            label="New Password"
-            placeholder="Enter your new password"
-            name="newPassword"
-            value={form.newPassword}
-            //   onChange={(e) => handleChangeForm(e)}
-            fullWidth
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-              },
-            }}
-          />
-        </div>
-      )}
+
       <div className="" style={{ display: "flex", gap: 10 }}>
         <Button
           sx={{

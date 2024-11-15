@@ -17,6 +17,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { BASE_URL, fontFamily, imgURL } from "../constants";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useGlobalContext } from "../GlobalProvider";
 
 const Register = () => {
   useEffect(() => {
@@ -26,9 +27,9 @@ const Register = () => {
     };
   }, []);
 
-  const [showPassword, setShowPassword] = useState(false);
+  const { loading, setLoading } = useGlobalContext();
 
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [alert, setAlert] = useState(false);
 
@@ -38,6 +39,11 @@ const Register = () => {
     remember: false,
     confirmPassword: "",
     fullName: "",
+  });
+
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
   });
 
   const handleInputChange = (e) => {
@@ -66,9 +72,34 @@ const Register = () => {
     event.preventDefault();
   };
 
+  const validateForm = () => {
+    const { fullName, email, password, confirmPassword } = form;
+    if (!fullName || !email || !password || !confirmPassword) {
+      setInfo({
+        isError: true,
+        message: "Please fill in all fields.",
+      });
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setInfo({
+        isError: true,
+        message: "Please fill in all fields.",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    setLoading(true);
+    if (!validateForm()) {
+      setLoading(false);
+      handleOpen(true);
+      return;
+    }
     const body = {
       username: form.email,
       fullname: form.fullName,
@@ -77,29 +108,55 @@ const Register = () => {
       address: "",
       password: form.password,
     };
+
     try {
       const res = await axios.post(`${BASE_URL}/api/Auth/Register`, body);
-      if (res.status == 200) {
+      if (res.status === 200) {
+        setInfo({
+          isError: false,
+          message: "Register successful",
+        });
         handleOpen();
+
         setTimeout(() => {
           navigate("/login");
         }, 1000);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleRegister();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [form]);
 
   return (
     <div style={{}}>
       <Snackbar
-        open={alert} // Use 'alert' state to control visibility
-        autoHideDuration={1000} // Automatically closes after 3 seconds
+        open={alert}
+        autoHideDuration={1000}
         onClose={handleClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          Registration successful!
+        <Alert
+          onClose={handleClose}
+          severity={info.isError ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {info.message}
         </Alert>
       </Snackbar>
       <div

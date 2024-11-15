@@ -13,9 +13,9 @@ import {
 import React, { useEffect, useState } from "react";
 import CustomDivider from "../components/CustomDivider";
 import { BASE_URL, fontFamily, imgURL } from "../constants";
-import AdoptionFormCard from "../components/AdoptionFormCard";
 import { useGlobalContext } from "../GlobalProvider";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -31,7 +31,6 @@ const style = {
 };
 
 const UploadPets = () => {
-  const [showField, setShowField] = useState(false);
   const { user, token } = useGlobalContext();
   const [form, setForm] = useState({
     fullName: "",
@@ -477,21 +476,23 @@ const UploadPets = () => {
           gap: 15,
         }}
       >
-        <Button
-          sx={{
-            textTransform: "none",
-            fontWeight: 600,
-            color: "#EF4444",
-            fontSize: "16px",
-            borderRadius: "10px",
-            border: "1px solid #EF4444",
-            fontFamily: fontFamily.msr,
-            p: "12px 20px",
-          }}
-          // onClick={() => handleCloseForm()}
-        >
-          Clear
-        </Button>
+        <Link to="/dashboard/staff/pets">
+          <Button
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              color: "#EF4444",
+              fontSize: "16px",
+              borderRadius: "10px",
+              border: "1px solid #EF4444",
+              fontFamily: fontFamily.msr,
+              p: "12px 20px",
+            }}
+          >
+            Back
+          </Button>
+        </Link>
+
         <Button
           sx={{
             textTransform: "none",

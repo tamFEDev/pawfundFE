@@ -4,26 +4,31 @@ import { BASE_URL, fontFamily } from "../constants";
 import CustomDivider from "../components/CustomDivider";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
+import PetsIcon from "@mui/icons-material/Pets";
+import ManagePetCard from "../components/ManagePetCard";
+import AdoptionFormCard from "../components/AdoptionFormCard";
+import ManageAdoptionFormCard from "../components/ManageAdoptionFormCard";
 
 const AdoptionForms = () => {
   const { token } = useGlobalContext();
 
   const [forms, setForms] = useState(null);
 
+  const fetchForms = async () => {
+    const response = await axios.get(
+      `${BASE_URL}/api/staff/get-all-adoptions-by-staff-and-manager`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Response Data:", response.data);
+    setForms(response.data);
+  };
+
   useEffect(() => {
-    const fetchForms = async () => {
-      const response = await axios.get(
-        `${BASE_URL}/api/Admin/get-pending-approve-requests-list`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Response Data:", response.data.data);
-      setForms(response.data.data);
-    };
     fetchForms();
   }, []);
 
@@ -41,7 +46,7 @@ const AdoptionForms = () => {
         backgroundColor: "white",
         borderRadius: "10px",
         width: "1240px",
-        // height: "570px",
+        height: "580px",
       }}
     >
       <div
@@ -71,7 +76,7 @@ const AdoptionForms = () => {
           gap: 12,
         }}
       >
-        {forms?.length > 0 ? (
+        {forms?.length == 0 ? (
           <Typography
             variant="body1"
             color="initial"
@@ -91,8 +96,8 @@ const AdoptionForms = () => {
               className=""
               style={{ display: "flex", gap: 10, alignItems: "center" }}
             >
-              {/* <PetsIcon /> */}
-              No pets found
+              <PetsIcon />
+              No forms found
             </div>
             <Typography
               variant="body1"
@@ -103,28 +108,30 @@ const AdoptionForms = () => {
               sx={{
                 marginTop: "10px",
                 display: "inline-block",
-                width: "550px",
+                width: "590px",
               }}
             >
-              There are currently no pets available for sheltering.
-            </Typography>
-            <Typography
-              variant="body1"
-              color="#667479"
-              fontSize={16}
-              fontFamily={fontFamily.msr}
-              sx={{
-                marginTop: "2px",
-                display: "inline-block",
-                width: "600px",
-              }}
-            >
-              As a staff member, please add new pets to the shelter system if
-              needed.
+              There are currently no adoption forms for your shelter
             </Typography>
           </Typography>
         ) : (
-          ""
+          forms?.map((d, index) => (
+            <ManageAdoptionFormCard
+              key={index}
+              name={d.petName}
+              petId={d.petId}
+              // submitDate={d.submitDate}
+              // petImg={d.petImg}
+              isApproved={d.isApproved}
+              adoptReason={d.reasonForAdopting}
+              introduction={d.selfDescription}
+              havePetBefore={d.hasPetExperience}
+              // declineReason={d.declineReason}
+              userId={d.userId}
+              adoptionId={d.adoptionId}
+              onRefresh={fetchForms}
+            />
+          ))
         )}
       </div>
     </div>

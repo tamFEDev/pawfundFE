@@ -29,8 +29,9 @@ const ShelterList = ({ mb }) => {
         flexWrap: "wrap",
         gap: 17,
         marginTop: "30px",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         marginBottom: mb,
+        padding: "0 60px",
       }}
     >
       {shelters.map((s, index) => (
