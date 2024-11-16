@@ -39,6 +39,7 @@ const AdoptionFormCard = ({
   isApproved,
   userId,
   createDate,
+  reasonForm,
 }) => {
   const { user } = useGlobalContext();
   const [open, setOpen] = useState(false);
@@ -109,12 +110,23 @@ const AdoptionFormCard = ({
             </Typography>
           </Typography>
           <CustomChip
-            title={isApproved ? "Approved" : "Pending"}
+            title={
+              isApproved == 2
+                ? "Pending"
+                : isApproved == 1
+                ? "Approved"
+                : "Rejected"
+            }
             fontSize={12}
             fontWeight={600}
-            color={isApproved ? "black" : "white"}
-            bgColor={isApproved ? "#10B981" : "#EF4444"} // Green for approved, red for pending
-            border={isApproved ? "solid 1px black" : "none"}
+            color={"white"}
+            bgColor={
+              isApproved == 2
+                ? "#f0ad4e"
+                : isApproved == 1
+                ? "#5cb85c"
+                : "#EF4444"
+            }
           />
         </div>
       </div>
@@ -162,18 +174,23 @@ const AdoptionFormCard = ({
               >
                 Adoption Application for {name}
                 <CustomChip
-                  title={status}
+                  title={
+                    isApproved == 2
+                      ? "Pending"
+                      : isApproved == 1
+                      ? "Approved"
+                      : "Rejected"
+                  }
                   fontSize={12}
                   fontWeight={600}
-                  color={status === "Approved" ? "black" : "white"}
+                  color={"white"}
                   bgColor={
-                    status === "Rejected"
-                      ? "#EF4444"
-                      : status === "Pending"
-                      ? "black"
-                      : null
+                    isApproved == 2
+                      ? "#f0ad4e"
+                      : isApproved == 1
+                      ? "#5cb85c"
+                      : "#EF4444"
                   }
-                  border={status === "Approved" && "solid 1px black"}
                 />
               </Typography>
             </div>
@@ -309,6 +326,25 @@ const AdoptionFormCard = ({
                   },
                 }}
               />
+              {isApproved != 2 && (
+                <TextField
+                  id=""
+                  value={reasonForm}
+                  placeholder="Reason"
+                  label="Reason"
+                  multiline
+                  fullWidth
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "10px",
+                    },
+                    marginTop: "20px",
+                  }}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              )}
             </div>
             <div
               className="button"

@@ -64,18 +64,6 @@ const MyForms = () => {
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
-    const resB = {
-      adoptionId: 4,
-      petId: 12,
-      isApproved: false,
-      note: "",
-      petName: "shiberian",
-      selfDescription: "123123123",
-      hasPetExperience: true,
-      reasonForAdopting: "wdqweqwe",
-      reason: null,
-    };
-
     const fetchForms = async () => {
       try {
         const res = await axios.get(
@@ -127,6 +115,7 @@ const MyForms = () => {
             havePetBefore={d.hasPetExperience}
             // declineReason={d.declineReason}
             createDate={d.createDate}
+            reasonForm={d.reason}
           />
         ))}
       </div>

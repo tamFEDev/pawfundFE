@@ -10,22 +10,51 @@ import AdoptionFormCard from "../components/AdoptionFormCard";
 import ManageAdoptionFormCard from "../components/ManageAdoptionFormCard";
 
 const AdoptionForms = () => {
-  const { token } = useGlobalContext();
+  const { token, user } = useGlobalContext();
 
   const [forms, setForms] = useState(null);
 
+  const fetchShelterID = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/staff/getShelterId?staffId=${user.userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const shelterId = res.data.shelterId;
+      return shelterId; // Return shelterId for chaining
+    } catch (err) {
+      console.log(err);
+      return null; // Return null if there's an error
+    }
+  };
+
+  const fetchFormsByShelter = async (shelterId) => {
+    if (!shelterId) return; // Check if shelterId is valid
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/staff/get-lists-adoptions-by-${shelterId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Response Data:", response.data);
+      setForms(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const fetchForms = async () => {
-    const response = await axios.get(
-      `${BASE_URL}/api/staff/get-all-adoptions-by-staff-and-manager`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log("Response Data:", response.data);
-    setForms(response.data);
+    const shelterId = await fetchShelterID();
+    await fetchFormsByShelter(shelterId);
   };
 
   useEffect(() => {
@@ -46,7 +75,8 @@ const AdoptionForms = () => {
         backgroundColor: "white",
         borderRadius: "10px",
         width: "1240px",
-        height: "580px",
+        height: !forms ? "580px" : "auto",
+        // height: "580px",
       }}
     >
       <div
@@ -73,10 +103,10 @@ const AdoptionForms = () => {
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 12,
+          gap: 30,
         }}
       >
-        {forms?.length == 0 ? (
+        {!forms ? (
           <Typography
             variant="body1"
             color="initial"
@@ -120,7 +150,7 @@ const AdoptionForms = () => {
               key={index}
               name={d.petName}
               petId={d.petId}
-              // submitDate={d.submitDate}
+              submitDate={d.createDate}
               // petImg={d.petImg}
               isApproved={d.isApproved}
               adoptReason={d.reasonForAdopting}
@@ -130,6 +160,8 @@ const AdoptionForms = () => {
               userId={d.userId}
               adoptionId={d.adoptionId}
               onRefresh={fetchForms}
+              username={d.username}
+              reasonForm={d.reason}
             />
           ))
         )}
