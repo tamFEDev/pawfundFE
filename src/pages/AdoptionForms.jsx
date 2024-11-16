@@ -75,7 +75,7 @@ const AdoptionForms = () => {
         backgroundColor: "white",
         borderRadius: "10px",
         width: "1240px",
-        height: !forms ? "580px" : "auto",
+        height: !forms || forms?.length <= 6 ? "570px" : "auto",
         // height: "580px",
       }}
     >
@@ -106,7 +106,7 @@ const AdoptionForms = () => {
           gap: 30,
         }}
       >
-        {!forms ? (
+        {!forms || forms?.length <= 0 ? (
           <Typography
             variant="body1"
             color="initial"
