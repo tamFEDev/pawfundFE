@@ -13,6 +13,7 @@ import { BASE_URL, fontFamily, imgURL } from "../constants";
 import CustomChip from "./CustomChip";
 import axios from "axios";
 import { useGlobalContext } from "../GlobalProvider";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -44,6 +45,7 @@ const AdoptionFormCard = ({
   const { user } = useGlobalContext();
   const [open, setOpen] = useState(false);
   const [pet, setPet] = useState({});
+  const navigate = useNavigate();
   const handleOpen = () => {
     setOpen(true);
   };
@@ -70,6 +72,10 @@ const AdoptionFormCard = ({
       month: "long",
       day: "numeric",
     });
+  };
+
+  const handleNavigateToPet = () => {
+    navigate(`/adoption/${petId}`);
   };
 
   return (
@@ -351,7 +357,7 @@ const AdoptionFormCard = ({
               style={{
                 display: "flex",
                 justifyContent: "flex-end",
-                marginTop: "10px",
+                marginTop: "20px",
                 gap: 15,
               }}
             >
@@ -382,6 +388,7 @@ const AdoptionFormCard = ({
                   fontFamily: fontFamily.msr,
                   p: "12px 30px",
                 }}
+                onClick={() => handleNavigateToPet()}
               >
                 View pet
               </Button>
