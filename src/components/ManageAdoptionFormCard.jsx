@@ -516,7 +516,7 @@ const ManageAdoptionFormCard = ({
                   id=""
                   value={reasonForm}
                   placeholder="Reason"
-                  label="Reason"
+                  label="Note"
                   multiline
                   fullWidth
                   sx={{

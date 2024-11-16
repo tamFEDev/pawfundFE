@@ -87,8 +87,10 @@ const ShelterDetail = () => {
         const res = await axios.get(
           `${BASE_URL}/api/Users/get-pets-in-shelter/${id}`
         );
-        if (res.status == 200) {
-          setPets(res.data);
+        if (res.status === 200) {
+          // Filter pets where isAdopted is false
+          const filteredPets = res.data.filter((pet) => !pet.isAdopted);
+          setPets(filteredPets);
         }
       } catch (err) {
         console.log(err);

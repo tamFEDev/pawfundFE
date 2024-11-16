@@ -35,7 +35,9 @@ const Donation = () => {
           lives of abandoned animals.
         </Typography>
       </div>
-      <ShelterList mb={"60px"} />
+      <div className="" style={{ padding: "0 60px" }}>
+        <ShelterList mb={"60px"} />
+      </div>
       <DonationBanner />
       <Footer mt={"100px"} />
     </div>

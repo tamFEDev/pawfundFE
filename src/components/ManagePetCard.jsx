@@ -105,12 +105,12 @@ const ManagePetCard = ({
         }
       );
       if (res.status === 200) {
-        handleClose(); // Move modal close before setting info
+        handleClose();
         setInfo({
           isError: false,
           message: "Delete pet successfully",
         });
-        onRefresh(); // Move refresh here
+        handleOpenAlert();
       }
     } catch (err) {
       console.log(err);
@@ -118,9 +118,10 @@ const ManagePetCard = ({
         isError: true,
         message: "There is something wrong. Please try again",
       });
+      handleOpenAlert();
     } finally {
       setLoading(false);
-      // Remove onRefresh() from here since we called it in the success block
+      onRefresh();
     }
   };
 
@@ -139,12 +140,6 @@ const ManagePetCard = ({
     };
     fetchShelterDetail();
   }, [shelterId]);
-
-  useEffect(() => {
-    if (info.message) {
-      handleOpenAlert();
-    }
-  }, [info]);
 
   const formatReadableDate = (isoDateString) => {
     const date = new Date(isoDateString);
@@ -294,7 +289,7 @@ const ManagePetCard = ({
           open={open}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
-          onClose={handleClose}
+          // onClose={handleClose}
         >
           <Box sx={style}>
             <div

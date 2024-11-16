@@ -31,7 +31,7 @@ const ShelterList = ({ mb }) => {
         marginTop: "30px",
         justifyContent: "flex-start",
         marginBottom: mb,
-        padding: "0 60px",
+        // padding: "0 60px",
       }}
     >
       {shelters.map((s, index) => (

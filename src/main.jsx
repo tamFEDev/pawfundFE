@@ -25,6 +25,7 @@ import ManagePets from "./pages/ManagePets.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PetManagement from "./pages/PetManagement.jsx";
 import UserManagement from "./pages/UserManagement.jsx";
+import DonationSuccess from "./pages/DonationSuccess.jsx";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +89,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ShelterDetail />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/shelters/donation-success",
+    element: (
+      <ProtectedRoute>
+        <DonationSuccess />
       </ProtectedRoute>
     ),
   },
