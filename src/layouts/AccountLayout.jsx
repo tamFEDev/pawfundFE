@@ -43,17 +43,10 @@ const AccountLayout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   const handleNavigate = (name, url) => {
-    if (name === "Upload Pets") {
-      if (!user.address && !user.phoneNumber) {
-        navigate("/account/profile");
-        handleOpen();
-        return;
-      }
-    }
     navigate(url);
   };
 

@@ -26,47 +26,28 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PetManagement from "./pages/PetManagement.jsx";
 import UserManagement from "./pages/UserManagement.jsx";
 import DonationSuccess from "./pages/DonationSuccess.jsx";
+import DonationList from "./pages/DonationList.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    ),
+    element: <Home />,
   },
   {
     path: "/home",
-    element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    ),
+    element: <Home />,
   },
   {
     path: "/donation",
-    element: (
-      <ProtectedRoute>
-        <Donation />
-      </ProtectedRoute>
-    ),
+    element: <Donation />,
   },
   {
     path: "/adoption",
-    element: (
-      <ProtectedRoute>
-        <Adoption />
-      </ProtectedRoute>
-    ),
+    element: <Adoption />,
   },
   {
     path: "/shelters",
-    element: (
-      <ProtectedRoute>
-        <Shelters />
-      </ProtectedRoute>
-    ),
+    element: <Shelters />,
   },
   {
     path: "/login",
@@ -78,19 +59,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/adoption/:id",
-    element: (
-      <ProtectedRoute>
-        <PetDetail />
-      </ProtectedRoute>
-    ),
+    element: <PetDetail />,
   },
   {
     path: "/shelters/:id",
-    element: (
-      <ProtectedRoute>
-        <ShelterDetail />
-      </ProtectedRoute>
-    ),
+    element: <ShelterDetail />,
   },
   {
     path: "/shelters/donation-success",
@@ -169,6 +142,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/manager/user-management",
         element: <UserManagement />,
+      },
+      {
+        path: "/dashboard/staff/donations",
+        element: <DonationList />,
       },
     ],
   },

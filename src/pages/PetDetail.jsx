@@ -45,15 +45,15 @@ const style = {
 };
 
 const PetDetail = () => {
-  const { user, token, loading, setLoading } = useGlobalContext();
+  const { user, token, loading, setLoading, isLogged } = useGlobalContext();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [form, setForm] = useState({
-    fullName: user.fullname,
-    address: user.address,
-    contactNumber: user.phoneNumber,
-    email: user.email,
+    fullName: user?.fullname,
+    address: user?.address,
+    contactNumber: user?.phoneNumber,
+    email: user?.email,
     personalDesc: "",
     isAdoptPetBefore: null,
     reason: "",
@@ -120,15 +120,23 @@ const PetDetail = () => {
   }, [petDetail.shelterId, id]); // Trigger only when shelterId is available
 
   const handleOpen = () => {
-    if (!user.phoneNumber || !user.address) {
+    if (isLogged) {
+      if (!user?.phoneNumber || !user?.address) {
+        setInfo({
+          isError: true,
+          message: "Please update contact information in 'My Profile' page",
+        });
+        handleOpenAlert();
+        return;
+      }
+      setOpen(true);
+    } else {
       setInfo({
         isError: true,
-        message: "Please update contact information in 'My Profile' page",
+        message: "Please login to continue",
       });
       handleOpenAlert();
-      return;
     }
-    setOpen(true);
   };
 
   const handleClose = () => {

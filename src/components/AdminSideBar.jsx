@@ -8,6 +8,7 @@ import { Link as RouterLink } from "react-router-dom";
 import PetsIcon from "@mui/icons-material/Pets";
 import EventIcon from "@mui/icons-material/Event";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 
 const staffPages = [
   {
@@ -24,6 +25,11 @@ const staffPages = [
     name: "Adoption Forms",
     url: "/dashboard/staff/adoption-forms",
     icon: <EditNoteIcon />,
+  },
+  {
+    name: "Donations",
+    url: "/dashboard/staff/donations",
+    icon: <VolunteerActivismIcon />,
   },
 ];
 

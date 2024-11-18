@@ -11,6 +11,8 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Header from "../components/Header";
 import { BASE_URL, fontFamily, imgURL } from "../constants";
@@ -60,7 +62,14 @@ const ShelterDetail = () => {
 
   const [customDonation, setCustomDonation] = useState(null);
 
-  const { user, token } = useGlobalContext();
+  const [alert, setAlert] = useState(false);
+
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const { user, token, isLogged } = useGlobalContext();
 
   const { id } = useParams();
 
@@ -111,7 +120,17 @@ const ShelterDetail = () => {
     }
   }, [customDonation]);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    if (!isLogged) {
+      setInfo({
+        isError: true,
+        message: "Please login to continue",
+      });
+      handleOpenAlert();
+      return;
+    }
+    setOpen(true);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -175,8 +194,30 @@ const ShelterDetail = () => {
     // handleClose();
   };
 
+  const handleOpenAlert = () => {
+    setAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlert(false);
+  };
+
   return (
     <div>
+      <Snackbar
+        open={alert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={info.isError ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {info.message}
+        </Alert>
+      </Snackbar>
       <Header />
       <div
         className=""

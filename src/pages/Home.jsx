@@ -15,24 +15,20 @@ const Home = () => {
   const navigate = useNavigate();
   // const userInfo = localStorage.getItem('user')
   useEffect(() => {
-    if (!isLogged) {
-      navigate("/login");
-    } else {
-      if (user?.roleId && isLogged) {
-        switch (user.roleId) {
-          case 4:
-            navigate("/dashboard/staff/about-shelter");
-            break;
-          case 2:
-            navigate("/");
-            break;
-          case 3:
-            navigate("/dashboard/manager/pet-management");
-            break;
-        }
+    if (user?.roleId && isLogged) {
+      switch (user.roleId) {
+        case 4:
+          navigate("/dashboard/staff/about-shelter");
+          break;
+        case 2:
+          navigate("/");
+          break;
+        case 3:
+          navigate("/dashboard/manager/pet-management");
+          break;
       }
     }
-    console.log(user.roleId);
+    // console.log(user.roleId);
   }, [user, isLogged, navigate]); // Depend on user, isLogged, and navigate
 
   return (
