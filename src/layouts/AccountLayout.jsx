@@ -26,6 +26,10 @@ const tabs = [
     name: "My Adoption Forms",
     url: "/account/my-forms",
   },
+  {
+    name: "My Donations",
+    url: "/account/my-donations",
+  },
 ];
 
 const AccountLayout = () => {

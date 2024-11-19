@@ -14,7 +14,6 @@ import MyProfile from "./pages/MyProfile.jsx";
 import AccountLayout from "./layouts/AccountLayout.jsx";
 import MyForms from "./pages/MyForms.jsx";
 import UploadPets from "./pages/UploadPets.jsx";
-// import { Dashboard } from "@mui/icons-material";
 import DashboardLayout from "./layouts/DashboardLayout.jsx";
 import GlobalProvider from "./GlobalProvider.jsx";
 import AboutShelter from "./pages/AboutShelter.jsx";
@@ -23,10 +22,10 @@ import AdoptionForms from "./pages/AdoptionForms.jsx";
 import MyPet from "./pages/MyPet.jsx";
 import ManagePets from "./pages/ManagePets.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import PetManagement from "./pages/PetManagement.jsx";
 import UserManagement from "./pages/UserManagement.jsx";
 import DonationSuccess from "./pages/DonationSuccess.jsx";
 import DonationList from "./pages/DonationList.jsx";
+import MyDonations from "./pages/MyDonations.jsx";
 
 const router = createBrowserRouter([
   {
@@ -100,6 +99,10 @@ const router = createBrowserRouter([
       {
         path: "/account/upload-pet",
         element: <UploadPets />,
+      },
+      {
+        path: "/account/my-donations",
+        element: <MyDonations />,
       },
     ],
   },

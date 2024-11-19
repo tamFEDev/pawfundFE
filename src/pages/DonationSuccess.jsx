@@ -24,7 +24,7 @@ const DonationSuccess = () => {
   };
 
   const handleViewDonations = () => {
-    navigate("/my-donations"); // Navigate to user's donation history page
+    navigate("/account/my-donations"); // Navigate to user's donation history page
   };
 
   return (

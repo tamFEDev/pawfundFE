@@ -185,7 +185,7 @@ const MyProfile = () => {
   };
 
   return (
-    <Card sx={{ width: "1500px", p: "30px 30px" }}>
+    <Card sx={{ width: "1600px", p: "30px 30px" }}>
       <Snackbar
         open={open}
         autoHideDuration={2000}
