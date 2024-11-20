@@ -8,11 +8,12 @@ import axios from "axios";
 import PetsIcon from "@mui/icons-material/Pets";
 
 const MyDonations = () => {
-  const { user, token } = useGlobalContext();
+  const { user, token, loading, setLoading } = useGlobalContext();
   const [donations, setDonations] = useState([]);
   const [totalDonation, setTotalDonation] = useState(0);
 
   const fetchDonations = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${BASE_URL}/api/Transaction/shelter-transactions-by-user?userId=${user.userId}`
@@ -27,6 +28,8 @@ const MyDonations = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,7 +162,7 @@ const MyDonations = () => {
               flexDirection: "column",
               gap: 20,
               height: "400px",
-              overflowY: "scroll",
+              overflowY: !loading ? "scroll" : "hidden",
               paddingBottom: "20px",
             }}
           >
@@ -239,7 +242,7 @@ const MyDonations = () => {
                       </div>
                       <div
                         className=""
-                        style={{ display: "flex", gap: 10, marginTop: "5px" }}
+                        style={{ display: "flex", gap: 5, marginTop: "5px" }}
                       >
                         <Typography
                           variant="body1"
