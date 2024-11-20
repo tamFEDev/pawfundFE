@@ -47,7 +47,7 @@ const MyForms = () => {
       <CustomDivider padding={"20px 0"} />
       <div
         className="card-container"
-        style={{ display: "flex", flexWrap: "wrap", gap: 30 }}
+        style={{ display: "flex", flexWrap: "wrap", gap: 10 }}
       >
         {forms.map((d, index) => (
           <AdoptionFormCard

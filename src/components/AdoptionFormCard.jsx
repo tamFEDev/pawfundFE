@@ -79,7 +79,7 @@ const AdoptionFormCard = ({
   };
 
   return (
-    <Card sx={{ width: "300px", p: "15px", borderRadius: "8px" }}>
+    <Card sx={{ width: "320px", p: "15px", borderRadius: "8px" }}>
       <div className="" style={{ display: "flex", gap: 12 }}>
         <Avatar src={pet.imageUrl} sx={{ width: "80px", height: "80px" }} />
         <div className="content">
