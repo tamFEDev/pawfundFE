@@ -21,12 +21,15 @@ const PendingUser = () => {
   // Function to fetch all user requests
   const fetchAllUsers = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/api/Manager/list-pending-requests`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${BASE_URL}/api/Manager/list-pending-requests`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (res.status === 200) {
         setData(res.data); // Update user data
@@ -151,38 +154,37 @@ const PendingUser = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-  {data.map((user, index) => (
-    <TableRow key={index}>
-      <TableCell>{user.userId}</TableCell>
-      <TableCell>{user.name || "N/A"}</TableCell>
-      <TableCell>{user.address || "N/A"}</TableCell>
-      <TableCell>{user.phoneNumber || "N/A"}</TableCell>
-      <TableCell>{user.occupation || "N/A"}</TableCell>
-      <TableCell>{user.idCardNumber || "N/A"}</TableCell>
-      <TableCell>{user.isApprovedUser ? "Yes" : "No"}</TableCell>
-      <TableCell>
-        {user.isApprovedUser ? (
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            fontFamily={fontFamily.msr}
-          >
-            Already Approved
-          </Typography>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => approveUser(user.approveId)}
-          >
-            Approve
-          </Button>
-        )}
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+            {data.map((user, index) => (
+              <TableRow key={index}>
+                <TableCell>{user.userId}</TableCell>
+                <TableCell>{user.name || "N/A"}</TableCell>
+                <TableCell>{user.address || "N/A"}</TableCell>
+                <TableCell>{user.phoneNumber || "N/A"}</TableCell>
+                <TableCell>{user.occupation || "N/A"}</TableCell>
+                <TableCell>{user.idCardNumber || "N/A"}</TableCell>
+                <TableCell>{user.isApprovedUser ? "Yes" : "No"}</TableCell>
+                <TableCell>
+                  {user.isApprovedUser ? (
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      fontFamily={fontFamily.msr}
+                    >
+                      Already Approved
+                    </Typography>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => approveUser(user.approveId)}
+                    >
+                      Approve
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       )}
     </div>
