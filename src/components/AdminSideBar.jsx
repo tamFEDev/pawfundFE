@@ -9,6 +9,8 @@ import PetsIcon from "@mui/icons-material/Pets";
 import EventIcon from "@mui/icons-material/Event";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 
 const staffPages = [
   {
@@ -51,7 +53,7 @@ const managerPages = [
   },
 
   {
-    name: "Pending  User",
+    name: "Pending User",
     url: "/dashboard/manager/pending-user", 
     icon: <AccountCircleIcon />, 
   },

@@ -26,6 +26,8 @@ import UserManagement from "./pages/UserManagement.jsx";
 import DonationSuccess from "./pages/DonationSuccess.jsx";
 import DonationList from "./pages/DonationList.jsx";
 import MyDonations from "./pages/MyDonations.jsx";
+import AuthorizeUsers from "./pages/AuthorizeUser.jsx";
+import PendingUser from "./pages/PendingUser.jsx";
 
 const router = createBrowserRouter([
   {
@@ -147,9 +149,13 @@ const router = createBrowserRouter([
         element: <UserManagement />,
       },
       {
-        path: "/dashboard/staff/donations",
-        element: <DonationList />,
+        path: "/dashboard/manager/authorize-User",
+        element: <AuthorizeUsers />,
       },
+      {
+        path: "/dashboard/manager/pending-User",
+        element: <PendingUser />,
+      }
     ],
   },
 ]);
