@@ -147,6 +147,10 @@ const router = createBrowserRouter([
         element: <UserManagement />,
       },
       {
+        path: "/dashboard/manager/user-management",
+        element: <UserManagement />,
+      },
+      {
         path: "/dashboard/staff/donations",
         element: <DonationList />,
       },
