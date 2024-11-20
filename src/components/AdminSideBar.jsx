@@ -44,6 +44,17 @@ const managerPages = [
     url: "/dashboard/manager/user-management",
     icon: <EventIcon />,
   },
+  {
+    name: "Authorize User", // New page
+    url: "/dashboard/manager/authorize-user", // Route to your new component
+    icon: <AccountCircleIcon />, // Icon for the page
+  },
+
+  {
+    name: "Pending  User",
+    url: "/dashboard/manager/pending-user", 
+    icon: <AccountCircleIcon />, 
+  },
 ];
 
 const AdminSideBar = () => {
