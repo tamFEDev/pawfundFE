@@ -51,6 +51,10 @@ const MyProfile = () => {
     placeGet: "",
     usualAddress: "",
   });
+  const [pending, setPending] = useState({
+    list: [],
+    isPending: null,
+  });
 
   useEffect(() => {
     if (form.address || form.contactNumber) {
@@ -67,6 +71,10 @@ const MyProfile = () => {
   });
 
   useEffect(() => {
+    fetchAllPendingList();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       setForm({
         fullName: user.fullname,
@@ -78,6 +86,34 @@ const MyProfile = () => {
       });
     }
   }, [user]);
+
+  const fetchAllPendingList = async () => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/api/Admin/get-pending-approve-requests-list`
+      );
+
+      if (res.status === 200) {
+        // Extract userIds into an array
+        const userIds = res.data.data.map((item) => item.userId);
+
+        // Check if the current user is in the list and not approved
+        const userInList = res.data.data.find(
+          (item) => item.userId === user.userId && item.isApprovedUser === false
+        );
+
+        // Update state
+        setPending({
+          ...pending,
+          list: userIds,
+          isPending: userInList ? true : false, // Set to true if userInList is found, else false
+        });
+        console.log(userIds);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -101,10 +137,15 @@ const MyProfile = () => {
             },
           }
         );
+
         if (res.status >= 200 && res.status < 300) {
-          const updatedUser = body; // Assuming the response contains the updated user data
+          const existingUser = JSON.parse(localStorage.getItem("user"));
+          const updatedUser = {
+            ...existingUser, // Preserve existing fields
+            ...body, // Overwrite with updated fields
+          };
           setUser(updatedUser); // Update the user state
-          localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage with new user data
+          localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage
           console.log(updatedUser);
           handleOpen();
           setUpdate(false);
@@ -180,6 +221,8 @@ const MyProfile = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      fetchAllPendingList();
     }
     console.log(verification);
   };
@@ -406,22 +449,39 @@ const MyProfile = () => {
       </div>
 
       <div className="" style={{ display: "flex", gap: 10 }}>
-        <Button
-          sx={{
-            bgcolor: "#103559",
-
-            fontSize: "12px",
-            fontWeight: 600,
-            fontFamily: fontFamily.msr,
-            color: "white",
-            p: "10px 20px",
-            textTransform: "none",
-            borderRadius: "10px",
-          }}
-          onClick={() => handleOpenVerification()}
-        >
-          Request verification
-        </Button>
+        {!pending.isPending ? (
+          <Button
+            sx={{
+              bgcolor: !user.isApprovedUser && "#103559",
+              fontSize: "12px",
+              fontWeight: 600,
+              fontFamily: fontFamily.msr,
+              color: "white",
+              p: "10px 20px",
+              textTransform: "none",
+              borderRadius: "10px",
+            }}
+            disabled={user.isApprovedUser}
+            onClick={() => handleOpenVerification()}
+          >
+            Request verification
+          </Button>
+        ) : (
+          <Typography
+            variant="body1"
+            color="#103559"
+            fontFamily={fontFamily.msr}
+            fontSize={16}
+            fontWeight={600}
+            sx={{
+              p: "10px 20px",
+              borderRadius: "10px",
+              border: "1px solid #103559",
+            }}
+          >
+            Your verification request is being reviewed
+          </Typography>
+        )}
       </div>
 
       <Modal

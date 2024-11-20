@@ -55,9 +55,11 @@ const DonationSuccess = () => {
               sx={{ mt: 2 }}
               fontFamily={fontFamily.msr}
             >
-              Your donation of {Number(vnpAmount).toLocaleString()} VND has been
-              successfully processed. Thank you for supporting the shelter!
+              Your donation of {Number(vnpAmount / 100).toLocaleString()} VND
+              has been successfully processed. Thank you for supporting the
+              shelter!
             </Typography>
+
             <Button
               variant="contained"
               // color="primary"
