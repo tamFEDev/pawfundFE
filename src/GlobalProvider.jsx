@@ -19,28 +19,32 @@ const GlobalProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const onRefresh = async () => {
-      if (token && !user) {
-        setLoading(true);
-        await loadUserAfterRefresh();
-        setLoading(false);
-      }
-    };
     onRefresh();
   }, []);
+
+  const onRefresh = async () => {
+    if (token && !user) {
+      setLoading(true);
+      await loadUserAfterRefresh();
+      setLoading(false);
+    }
+  };
 
   const loadUserAfterRefresh = async () => {
     try {
       const userData = await getLoggedUser(token);
       if (userData) {
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData); // Cập nhật state user
+        localStorage.setItem("user", JSON.stringify(userData)); // Đồng bộ localStorage
         setIsLogged(true);
+        console.log(userData);
       } else {
         setIsLogged(false);
+        localStorage.removeItem("user"); // Xóa user nếu không có
       }
     } catch (err) {
       console.log("Failed to load user: ", err.message);
+      setIsLogged(false);
     }
   };
 

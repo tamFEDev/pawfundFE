@@ -162,7 +162,7 @@ const MyDonations = () => {
               flexDirection: "column",
               gap: 20,
               height: "400px",
-              overflowY: !loading ? "scroll" : "hidden",
+              overflowY: loading || donations.length < 3 ? "hidden" : "scroll",
               paddingBottom: "20px",
             }}
           >

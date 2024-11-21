@@ -6,10 +6,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import { useGlobalContext } from "../GlobalProvider";
 import { Link as RouterLink } from "react-router-dom";
 import PetsIcon from "@mui/icons-material/Pets";
-import EventIcon from "@mui/icons-material/Event";
+// import EventIcon from "@mui/icons-material/Event";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
-
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
 const staffPages = [
   {
     name: "About Shelter",
@@ -42,7 +43,12 @@ const managerPages = [
   {
     name: "User Management",
     url: "/dashboard/manager/user-management",
-    icon: <EventIcon />,
+    icon: <PeopleAltIcon />,
+  },
+  {
+    name: "Pending Users",
+    url: "/dashboard/manager/pending-verification",
+    icon: <PendingActionsIcon />,
   },
 ];
 

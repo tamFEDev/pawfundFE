@@ -29,7 +29,8 @@ const style = {
 };
 
 const MyProfile = () => {
-  const { user, token, setUser, loading, setLoading } = useGlobalContext();
+  const { user, token, setUser, loading, setLoading, getLoggedUser } =
+    useGlobalContext();
   const [update, setUpdate] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
@@ -71,7 +72,11 @@ const MyProfile = () => {
   });
 
   useEffect(() => {
-    fetchAllPendingList();
+    const fetchList = async () => {
+      await fetchAllPendingList();
+      console.log(pending.list);
+    };
+    fetchList();
   }, []);
 
   useEffect(() => {
@@ -86,6 +91,31 @@ const MyProfile = () => {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    const getUser = async (token) => {
+      try {
+        const user = await getLoggedUser(token);
+        console.log("current user", user);
+
+        // Check and update `localStorage` with `isApprovedUser`
+        if (user && user.isApprovedUser !== undefined) {
+          const existingUser = JSON.parse(localStorage.getItem("user")) || {};
+          const updatedUser = {
+            ...existingUser,
+            isApprovedUser: user.isApprovedUser,
+          };
+
+          // Update `localStorage` and state
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setUser(updatedUser); // Ensure the global state stays updated
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+    getUser(token);
+  }, []);
 
   const fetchAllPendingList = async () => {
     try {
@@ -108,7 +138,6 @@ const MyProfile = () => {
           list: userIds,
           isPending: userInList ? true : false, // Set to true if userInList is found, else false
         });
-        console.log(userIds);
       }
     } catch (err) {
       console.log(err);

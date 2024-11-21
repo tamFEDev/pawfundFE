@@ -26,6 +26,7 @@ import UserManagement from "./pages/UserManagement.jsx";
 import DonationSuccess from "./pages/DonationSuccess.jsx";
 import DonationList from "./pages/DonationList.jsx";
 import MyDonations from "./pages/MyDonations.jsx";
+import UnverifiedUser from "./pages/UnverifiedUser.jsx";
 
 const router = createBrowserRouter([
   {
@@ -147,8 +148,8 @@ const router = createBrowserRouter([
         element: <UserManagement />,
       },
       {
-        path: "/dashboard/manager/user-management",
-        element: <UserManagement />,
+        path: "/dashboard/manager/pending-verification",
+        element: <UnverifiedUser />,
       },
       {
         path: "/dashboard/staff/donations",
