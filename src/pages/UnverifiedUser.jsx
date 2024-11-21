@@ -13,10 +13,25 @@ import {
   Typography,
 } from "@mui/material";
 import CustomDivider from "../components/CustomDivider";
+import { useGlobalContext } from "../GlobalProvider";
 
 const UnverifiedUser = () => {
+  const { token, setLoading, loading } = useGlobalContext();
   const [users, setUsers] = useState([]);
   const [userFullNames, setUserFullNames] = useState({}); // Store full names by userId
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
+  });
+  const [alert, setAlert] = useState(false);
+
+  const handleOpenAlert = () => {
+    setAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlert(false);
+  };
 
   const getUserFullName = async (id) => {
     try {
@@ -56,7 +71,30 @@ const UnverifiedUser = () => {
     });
   };
 
-  const handleVerify = () => {};
+  const handleVerify = async (approveId) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/Admin/approve-info-user?approveId=${approveId}&isApproved=true`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) {
+        setInfo({
+          isError: false,
+          message: "Approved successfully",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      fetchPendingUsers();
+    }
+  };
 
   useEffect(() => {
     fetchPendingUsers();
@@ -283,7 +321,7 @@ const UnverifiedUser = () => {
                         borderRadius: "10px",
                         // p: "12px 20px",
                       }}
-                      onClick={() => handleVerify()}
+                      onClick={() => handleVerify(row.approveId)}
                     >
                       Approve
                     </Button>
