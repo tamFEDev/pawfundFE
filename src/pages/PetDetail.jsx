@@ -177,6 +177,15 @@ const PetDetail = () => {
     );
   };
 
+  const formatReadableDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     const body = {
@@ -332,7 +341,7 @@ const PetDetail = () => {
             <CustomDivider />
             <PetDetailTag
               title={"Publish date"}
-              value={petDetail.publishDate || "N/A"}
+              value={formatReadableDate(petDetail.createAt) || "N/A"}
             />
             <Button
               sx={{

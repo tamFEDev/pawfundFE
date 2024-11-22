@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL, fontFamily } from "../constants";
 import axios from "axios";
 import {
+  Alert,
   Button,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -71,7 +73,8 @@ const UnverifiedUser = () => {
     });
   };
 
-  const handleVerify = async (approveId) => {
+  const handleApprove = async (approveId) => {
+    setLoading(true);
     try {
       const res = await axios.post(
         `${BASE_URL}/api/Admin/approve-info-user?approveId=${approveId}&isApproved=true`,
@@ -88,10 +91,50 @@ const UnverifiedUser = () => {
           isError: false,
           message: "Approved successfully",
         });
+        handleOpenAlert();
       }
     } catch (err) {
       console.log(err);
+      setInfo({
+        isError: true,
+        message: "Something went wrong. Please try again",
+      });
+      handleOpenAlert();
     } finally {
+      setLoading(false);
+      fetchPendingUsers();
+    }
+  };
+
+  const handleReject = async (approveId) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/Admin/approve-info-user?approveId=${approveId}&isApproved=false`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) {
+        setInfo({
+          isError: false,
+          message: "Rejected successfully",
+        });
+        handleOpenAlert();
+      }
+    } catch (err) {
+      console.log(err);
+      setInfo({
+        isError: true,
+        message: "Something went wrong. Please try again",
+      });
+      handleOpenAlert();
+    } finally {
+      setLoading(false);
       fetchPendingUsers();
     }
   };
@@ -106,110 +149,125 @@ const UnverifiedUser = () => {
   }, [users]);
 
   return (
-    <div
-      style={{
-        padding: "20px 20px",
-        backgroundColor: "white",
-        borderRadius: "10px",
-        width: "1238px",
-        height: "567px",
-      }}
-    >
-      <Typography
-        variant="body1"
-        fontSize={24}
-        fontWeight={600}
-        fontFamily={fontFamily.msr}
+    <>
+      <Snackbar
+        open={alert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        Pending Verification Request
-      </Typography>
-      <CustomDivider padding={"20px 0"} />
-      {users.length === 0 ? (
+        <Alert
+          onClose={handleCloseAlert}
+          severity={info.isError ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {info.message}
+        </Alert>
+      </Snackbar>
+      <div
+        style={{
+          padding: "20px 20px",
+          backgroundColor: "white",
+          borderRadius: "10px",
+          width: "1238px",
+          height: "567px",
+        }}
+      >
         <Typography
           variant="body1"
-          fontSize={30}
+          fontSize={24}
           fontWeight={600}
           fontFamily={fontFamily.msr}
-          textAlign="center"
         >
-          No users found
+          Pending Verification Request
         </Typography>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead sx={{ padding: "20px 0" }}>
-              <TableRow>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  UserID
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Full Name
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Contact
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Occupation
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  ID Card
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Place of issue
-                </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Permanent Address
-                </TableCell>
-                {/* <TableCell
+        <CustomDivider padding={"20px 0"} />
+        {users.length === 0 ? (
+          <Typography
+            variant="body1"
+            fontSize={30}
+            fontWeight={600}
+            fontFamily={fontFamily.msr}
+            textAlign="center"
+          >
+            No users found
+          </Typography>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead sx={{ padding: "20px 0" }}>
+                <TableRow>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    UserID
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    Full Name
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    Contact
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    Occupation
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    ID Card
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    Place of issue
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
+                    }}
+                  >
+                    Permanent Address
+                  </TableCell>
+                  {/* <TableCell
                   align="left"
                   sx={{
                     fontFamily: fontFamily.msr,
@@ -219,90 +277,90 @@ const UnverifiedUser = () => {
                 >
                   Request Date
                 </TableCell> */}
-                <TableCell
-                  align="center"
-                  sx={{
-                    fontFamily: fontFamily.msr,
-                    fontWeight: 600,
-                    // fontSize: 16,
-                  }}
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map((row) => (
-                <TableRow
-                  key={row.userId}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
                   <TableCell
-                    align="left"
+                    align="center"
                     sx={{
                       fontFamily: fontFamily.msr,
+                      fontWeight: 600,
+                      // fontSize: 16,
                     }}
                   >
-                    {row.userId}
+                    Actions
                   </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                      maxWidth: 160, // Set your desired width limit
-                      whiteSpace: "nowrap", // Prevent text from wrapping
-                      overflow: "hidden", // Hide overflow content
-                      textOverflow: "ellipsis",
-                    }}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.map((row) => (
+                  <TableRow
+                    key={row.userId}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    {userFullNames[row.userId] || "Loading..."}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                    }}
-                  >
-                    {row.phoneNumber}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                    }}
-                  >
-                    {row.occupation}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                    }}
-                  >
-                    {row.idCardNumber}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                    }}
-                  >
-                    {row.placeGet}
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{
-                      fontFamily: fontFamily.msr,
-                      maxWidth: 250, // Set your desired width limit
-                      whiteSpace: "nowrap", // Prevent text from wrapping
-                      overflow: "hidden", // Hide overflow content
-                      textOverflow: "ellipsis", // Add ellipsis (...) for overflow text
-                    }}
-                  >
-                    {row.usualAddress}
-                  </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                      }}
+                    >
+                      {row.userId}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                        maxWidth: 160, // Set your desired width limit
+                        whiteSpace: "nowrap", // Prevent text from wrapping
+                        overflow: "hidden", // Hide overflow content
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {userFullNames[row.userId] || "Loading..."}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                      }}
+                    >
+                      {row.phoneNumber}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                      }}
+                    >
+                      {row.occupation}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                      }}
+                    >
+                      {row.idCardNumber}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                      }}
+                    >
+                      {row.placeGet}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontFamily: fontFamily.msr,
+                        maxWidth: 250, // Set your desired width limit
+                        whiteSpace: "nowrap", // Prevent text from wrapping
+                        overflow: "hidden", // Hide overflow content
+                        textOverflow: "ellipsis", // Add ellipsis (...) for overflow text
+                      }}
+                    >
+                      {row.usualAddress}
+                    </TableCell>
 
-                  {/* <TableCell
+                    {/* <TableCell
                     align="left"
                     sx={{
                       fontFamily: fontFamily.msr,
@@ -310,30 +368,50 @@ const UnverifiedUser = () => {
                   >
                     {formatReadableDate(row.dateGet)}
                   </TableCell> */}
-                  <TableCell align="center">
-                    <Button
-                      sx={{
-                        color: "rgb(92, 184, 92)",
-                        fontFamily: fontFamily.msr,
-                        bgcolor: "rgb(92, 184, 92, 0.1)",
-                        fontWeight: 600,
-                        textTransform: "none",
-                        borderRadius: "10px",
-                        // p: "12px 20px",
-                      }}
-                      onClick={() => handleVerify(row.approveId)}
+                    <TableCell
+                      align="center"
+                      style={{ display: "flex", flexDirection: "column" }}
                     >
-                      Approve
-                    </Button>
-                    {/* <Button>Reject</Button> */}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </div>
+                      <Button
+                        sx={{
+                          color: "rgb(92, 184, 92)",
+                          fontFamily: fontFamily.msr,
+                          bgcolor: !loading && "rgb(92, 184, 92, 0.1)",
+                          fontWeight: 600,
+                          textTransform: "none",
+                          borderRadius: "10px",
+                          // p: "12px 20px",
+                        }}
+                        disabled={loading}
+                        onClick={() => handleApprove(row.approveId)}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        sx={{
+                          color: "rgb(239 68 68)",
+                          fontFamily: fontFamily.msr,
+                          bgcolor: !loading && "rgb(239, 68, 68, 0.1)",
+                          fontWeight: 600,
+                          textTransform: "none",
+                          borderRadius: "10px",
+                          // p: "12px 20px",
+                          marginTop: "10px",
+                        }}
+                        disabled={loading}
+                        onClick={() => handleReject(row.approveId)}
+                      >
+                        Reject
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </div>
+    </>
   );
 };
 

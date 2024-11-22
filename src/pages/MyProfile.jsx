@@ -581,7 +581,7 @@ const MyProfile = () => {
             fontFamily={fontFamily.msr}
             textAlign={"left"}
           >
-            Requets for Account Verification
+            Request for Account Verification
           </Typography>
           <Typography
             variant="body1"
