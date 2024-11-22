@@ -336,7 +336,7 @@ const PetDetail = () => {
             />
             <Button
               sx={{
-                bgcolor: "#003459",
+                bgcolor: !petDetail.isAdopted && "#003459",
                 color: "white",
                 fontWeight: 600,
                 fontSize: 16,
@@ -347,6 +347,7 @@ const PetDetail = () => {
                 py: "12px",
                 marginTop: "40px",
               }}
+              disabled={petDetail.isAdopted}
               onClick={() => handleOpen()}
             >
               Adopt {petDetail.petName} now

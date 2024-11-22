@@ -112,7 +112,7 @@ const UnverifiedUser = () => {
         backgroundColor: "white",
         borderRadius: "10px",
         width: "1238px",
-        height: "532px",
+        height: "567px",
       }}
     >
       <Typography
