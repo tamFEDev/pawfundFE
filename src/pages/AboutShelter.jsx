@@ -82,6 +82,7 @@ const AboutShelter = () => {
         backgroundColor: "white",
         borderRadius: "10px",
         width: "1230px",
+        height: "546px",
       }}
     >
       <div
