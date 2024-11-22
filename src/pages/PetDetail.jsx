@@ -121,10 +121,10 @@ const PetDetail = () => {
 
   const handleOpen = () => {
     if (isLogged) {
-      if (!user?.phoneNumber || !user?.address) {
+      if (!user.isApprovedUser) {
         setInfo({
           isError: true,
-          message: "Please update contact information in 'My Profile' page",
+          message: "Please verify your account in My Profile tab first!",
         });
         handleOpenAlert();
         return;

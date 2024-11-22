@@ -40,7 +40,7 @@ const MyProfile = () => {
     newPassword: "",
     oldPassword: "",
   });
-  const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState(false);
   const [openVerification, setOpenVerification] = useState(false);
   const [verification, setVerification] = useState({
     address: "",
@@ -55,6 +55,10 @@ const MyProfile = () => {
   const [pending, setPending] = useState({
     list: [],
     isPending: null,
+  });
+  const [info, setInfo] = useState({
+    isError: false,
+    message: "",
   });
 
   useEffect(() => {
@@ -169,14 +173,25 @@ const MyProfile = () => {
 
         if (res.status >= 200 && res.status < 300) {
           const existingUser = JSON.parse(localStorage.getItem("user"));
+
           const updatedUser = {
             ...existingUser, // Preserve existing fields
             ...body, // Overwrite with updated fields
           };
+
           setUser(updatedUser); // Update the user state
+
           localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage
+
           console.log(updatedUser);
-          handleOpen();
+
+          setInfo({
+            isError: false,
+            message: "User updated successfully",
+          });
+
+          handleOpenAlert();
+
           setUpdate(false);
         }
       } catch (err) {
@@ -197,16 +212,24 @@ const MyProfile = () => {
     setVerification({ ...verification, [name]: value });
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenAlert = () => {
+    setAlert(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseAlert = () => {
+    setAlert(false);
   };
 
   const handleOpenVerification = () => {
-    setOpenVerification(true);
+    if (user.address && user.phoneNumber) {
+      setOpenVerification(true);
+    } else {
+      setInfo({
+        isError: true,
+        message: "You need to update your Personal Information first!",
+      });
+      handleOpenAlert();
+    }
   };
 
   const handleCloseVerification = () => {
@@ -224,6 +247,7 @@ const MyProfile = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const body = {
       address: verification.address,
       phoneNumber: verification.phoneNumber,
@@ -251,21 +275,50 @@ const MyProfile = () => {
     } catch (err) {
       console.log(err);
     } finally {
+      setLoading(false);
+      setInfo({
+        isError: false,
+        message: "Request for verification has been sent",
+      });
+      handleOpenAlert();
       fetchAllPendingList();
     }
+
     console.log(verification);
+  };
+
+  const isFormComplete = () => {
+    const {
+      occupation,
+      idCardNumber,
+      petCareCapacity,
+      placeGet,
+      usualAddress,
+    } = verification;
+
+    return (
+      occupation.trim() !== "" &&
+      idCardNumber.trim() !== "" &&
+      petCareCapacity.trim() !== "" &&
+      placeGet.trim() !== "" &&
+      usualAddress.trim() !== ""
+    );
   };
 
   return (
     <Card sx={{ width: "1600px", p: "30px 30px" }}>
       <Snackbar
-        open={open}
+        open={alert}
         autoHideDuration={2000}
-        onClose={handleClose}
+        onClose={handleCloseAlert}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          User info updated successfully
+        <Alert
+          onClose={handleCloseAlert}
+          severity={info.isError ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {info.message}
         </Alert>
       </Snackbar>
       <Typography
@@ -515,7 +568,7 @@ const MyProfile = () => {
 
       <Modal
         open={openVerification}
-        onClose={handleCloseVerification}
+        // onClose={handleCloseVerification}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -694,10 +747,11 @@ const MyProfile = () => {
                 color: "#103559",
                 fontSize: "16px",
                 borderRadius: "10px",
-                border: "1px solid #103559",
+                border: !loading && "1px solid #103559",
                 fontFamily: fontFamily.msr,
                 p: "12px 20px",
               }}
+              disabled={loading}
               onClick={() => handleCloseVerification()}
             >
               Cancel
@@ -705,14 +759,14 @@ const MyProfile = () => {
             <Button
               sx={{
                 textTransform: "none",
-                bgcolor: "#103559",
+                bgcolor: !isFormComplete() || loading ? "" : "#103559",
                 fontSize: "16px",
                 borderRadius: "10px",
                 fontFamily: fontFamily.msr,
                 p: "12px 20px",
                 color: "white",
               }}
-              // disabled={!isFormComplete()}
+              disabled={!isFormComplete() || loading}
               onClick={() => handleSubmit()}
             >
               Submit request
